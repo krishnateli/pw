@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<project name="PublicationBuilderUI" default="distribution"> 
+    
+    <property name="dist.dir" value="dist"/>
+    <property name="PB_UI_ROOT" value="${PublicationBuilderUI}"/> 
+    <property name="ANT_OPTS" value="-Xmx1g -XX:MaxPermSize=512m"/>
+    
+    <target name="distribution" depends="clean, compile"/>
+    
+	<target name="clean">
+		<delete quiet="true" includeemptydirs="true">
+		  <fileset dir="${dist.dir}" includes="**/*">
+		  </fileset>
+		</delete>
+	</target>
+
+	
+    <target name="compile"> 
+		<exec executable="node_modules/.bin/ng.cmd" failonerror="true">
+            <arg value="build"/>
+			<arg value="--aot"/>
+            <arg value="--prod"/>
+        </exec>
+    </target> 
+ 
+</project>

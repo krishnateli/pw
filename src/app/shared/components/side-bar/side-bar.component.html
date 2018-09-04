@@ -1,0 +1,28 @@
+<div class="{{currentApp == 'PublicationWizard'? 'pw-side-toolbar' : 'mb-side-toolbar'}}">
+  <div class="container">
+    <mat-list>
+      <ul class="nav nav-pills nav-stacked">
+        <li *ngFor="let item of sideBarData; let itemIndex = index">
+          <div *ngIf="currentApp == 'PublicationWizard'">
+            <mat-list-item *ngIf="publicationList.length != 0"
+               id="nav_pub_sel" data-toggle="tooltip" title='{{item.title|translate}}' routerLink="{{item.navigate}}" [style.color]="sharedDataService._Customization.sidebarTools.color"
+              routerLinkActive #rla="routerLinkActive" [ngStyle]="rla.isActive ? {'color': sharedDataService._Customization.icon.selectionColor}
+              : {'color': sharedDataService._Customization.sidebarTools.color}">
+              <a style="color: inherit">
+                <mat-icon class="pw-app-icon" style="font-size: 18px;">{{item.icon}}</mat-icon>
+              </a>
+            </mat-list-item>
+          </div>
+
+          <div *ngIf="currentApp == 'MarketingBoard'" class="mb-app-icon">
+            <mat-list-item id="nav_pub_sel" data-toggle="tooltip" title='{{item.title|translate}}'>
+              <a routerLink="{{item.navigate}}" routerLinkActive="active_tab">
+                <mat-icon>{{item.icon}}</mat-icon>
+              </a>
+            </mat-list-item>
+          </div>
+        </li>
+      </ul>
+    </mat-list>
+  </div>
+</div>

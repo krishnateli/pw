@@ -1,0 +1,37 @@
+
+<mat-form-field *ngIf="variableData.type=='Vector' && !variableData.withLOV" class="settings-full-width">
+  <mat-select [ngModel]="variableData._selValue" (ngModelChange)="variableData.selectedValues.value = $event" (selectionChange)="variableType == 'Page' ? onChangeOfPageVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id) : onChangeOfVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pageId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.areaId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex)"
+    placeholder="{{variableData.name}}"
+    name="" multiple>
+    <mat-option class="multiColumn" *ngFor="let varVal of variableData._allValues" [value]="varVal.value" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+      {{varVal.value}}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field *ngIf="((variableData.type=='Single') && variableData.withLOV) || (variableData.type=='Vector' && variableData.withLOV)">
+  <mat-select class="ib-ver-padd element-selection-half-width" style="width: 100%;" [ngModel]="ibUtilsService.showSelectedOrDefaultValue(variableData)"
+    (ngModelChange)="variableData.selectedValues.value = $event" (selectionChange)="variableType == 'Page' ? onChangeOfPageVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id) : onChangeOfVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pageId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.areaId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex)"
+    placeholder="{{variableData.name}}">
+    <mat-option *ngFor="let varVal of variableData.values" [value]="varVal.value" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+      {{ varVal.value }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+<mat-form-field class="" style="width: 100%;" *ngIf="(variableData.type=='Single')&&(variableData.valueType=='Number') && !variableData.withLOV">
+  <input [ngModel]="ibUtilsService.showSelectedOrDefaultValue(variableData)" (ngModelChange)="variableData.selectedValues.value = $event"
+    (input)="variableType == 'Page' ? onChangeOfPageVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id) : onChangeOfVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pageId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.areaId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex)"
+    matInput placeholder="{{variableData.name}}">
+</mat-form-field>
+
+<mat-form-field class="" style="width: 100%;" *ngIf="(variableData.type=='Single')&&(variableData.valueType=='Text') && !variableData.withLOV">
+  <input [ngModel]="ibUtilsService.showSelectedOrDefaultValue(variableData)" (ngModelChange)="variableData.selectedValues.value = $event"
+    (input)="variableType == 'Page' ? onChangeOfPageVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id) : onChangeOfVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pageId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.areaId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex)"
+    matInput placeholder="{{variableData.name}}">
+</mat-form-field>
+
+<div *ngIf="(variableData.type=='Single')&&(variableData.valueType=='Boolean')">
+  <mat-checkbox [ngModel]="ibUtilsService.showSelectedOrDefaultValue(variableData)==1" (ngModelChange)="variableData.selectedValues.value = $event"
+    (change)="variableType == 'Page' ? onChangeOfPageVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id) : onChangeOfVariable(variableData.selectedValues.value, variableData, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pageId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.areaId, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex)">{{variableData.name}}</mat-checkbox>
+</div>

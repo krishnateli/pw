@@ -1,0 +1,208 @@
+<div id="container-main">
+  <ng-template [ngIf]="sharedDataService.publicationList.length>0">
+    <div class="col-sm-12">
+      <div class="col-lg-6 col-md-6 col-sm-6 col-md-push-2">
+        <div class="row">
+          <mat-card class="divWidth">
+            <mat-card-title>
+              <mat-toolbar id="elementTab1" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+                <mat-form-field class="pw-full-width es-toolbar-hor-drop pw-element-select">
+                  <mat-select placeholder="" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack" (selectionChange)="stackChanged(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack)">
+                    <mat-option *ngFor="let eachStack of ibUtilsService.getStacklistFromProjectDTOHTML(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.project)"
+                      [value]="eachStack" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{eachStack.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="pw-full-width es-toolbar-hor-drop pw-element-select" *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters.length>0">
+                  <mat-select placeholder="Stack Filter" [(ngModel)]="this.sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStackFilter" (selectionChange)="stackFilterChanged(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack)">
+                    <mat-option *ngFor="let eachStackFilter of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters"
+                      [value]="eachStackFilter" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{eachStackFilter.label}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <span *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters.length>0"
+                  (click)="clearStackFilter(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack)"
+                  class="close" style="position: relative;color: #ddd;">
+                  <mat-icon class="builder-icon" style="font-size: 18px;">clear</mat-icon>
+                </span>
+                <span class="element-spacer"></span>
+                <mat-icon class="builder-icon" (click)="toggleSelect()" style="font-size: 18px;cursor: pointer;margin-top: 5px;">search</mat-icon>
+                <input matInput type="search" [ngStyle]="{width:isOpen ? '150px' : '0px'}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQuery"
+                  placeholder="search" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+                  [style.font-family]="sharedDataService._Customization.font.style">
+                <mat-icon class="builder-icon" (click)="clearSearch()" [ngStyle]="{display:isOpen ? 'block' : 'none'}" style="font-size: 18px;cursor: pointer;">clear</mat-icon>
+              </mat-toolbar>
+            </mat-card-title>
+            <mat-card-content #stackTableContainer style="position: relative;" id="StackTable">
+              <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].loaderStatus">
+                <img src="assets/images/loader-new.gif" alt="Loading..." />
+              </span>
+              <app-table tableWidth="large" page="Element" tableType="Stack" [selectedRows]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStackRows" [searchQuery]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQuery" draggableColumn="true" [mainTable]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stacklist_table | search : sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQuery | checkboxfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedFilters : addFilter : addTextFilter : change" [containerWidth]="stackTableContainer.offsetWidth" ></app-table>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div class="col-lg-1 col-md-1 col-sm-1 col-md-push-2">
+        <div class="row">
+          <div class="select_all_button">
+            <button (click)="selectAllElementsFromStackTable()" class="select_all" data-toggle="tooltip" title="Select All From Stack" [ngStyle]="ibUtilsService.checkStackTableLength()">
+              <mat-icon style="margin-top: 8px; margin-bottom: 8px;">select_all</mat-icon>
+            </button>
+            <button (click)="selectAllElementsFromBasket()" style="right:0" class="select_all" data-toggle="tooltip" title="Select All From Basket" [ngStyle]="ibUtilsService.checkBasketTableLength()">
+              <mat-icon style="margin-top: 8px; margin-bottom: 8px;">select_all</mat-icon>
+            </button>
+          </div>
+        </div>
+        <div class="row">
+          <div class="select_all_button">
+            <button (click)="addStackElementsTobasket($event)" class="select_all" data-toggle="tooltip" title="Add To Basket" class="select_all" [ngStyle]="ibUtilsService.checkStackTableLength()">
+              <mat-icon style="margin-top: 8px; margin-bottom: 8px; ">keyboard_arrow_right</mat-icon>
+            </button>
+            <button (click)="removeStackElementsFromBasket()" style="right:0" class="select_all" ata-toggle="tooltip" title="Remove From Basket" [ngStyle]="ibUtilsService.checkBasketTableLength()"
+              class="select_all">
+              <mat-icon style="margin-top: 8px; margin-bottom: 8px; ">keyboard_arrow_left</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-5 col-md-push-2">
+        <div class="row">
+          <mat-card class="divWidthSmall">
+            <mat-card-title>
+              <mat-toolbar id="elementTab2" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+                <span>Basket</span>
+                <span class="element-spacer"></span>
+                <mat-icon (click)="toggleSearchBasket()" style="font-size: 18px;cursor: pointer;margin-top: 5px;">search</mat-icon>
+                <input type="search" [ngStyle]="{width:isOpenBasket ? '150px' : '0px'}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryBasket"
+                  placeholder="search" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+                  [style.font-family]="sharedDataService._Customization.font.style">
+                <mat-icon (click)="clearSearchBasket()" [ngStyle]="{display:isOpenBasket ? 'block' : 'none'}" style="font-size: 18px;cursor: pointer;">clear</mat-icon>
+              </mat-toolbar>
+            </mat-card-title>
+            <mat-card-content #basketTableContainer style="height:calc(100vh - 330px)" id="BasketTable">
+              <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._reloadBasketLoader">
+                <img src="assets/images/loader-new.gif" alt="Loading..." />
+              </span>
+              <app-table tableWidth="small" page="Element" tableType="Basket" draggableColumn="true" [selectedRows]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBucketRows"
+                [mainTable]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementlist_table | search : sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryBasket"
+                [containerWidth]="basketTableContainer.offsetWidth"></app-table>
+            </mat-card-content>
+          </mat-card>
+          <mat-card style="min-height: 203px;margin-top: 10px">
+            <mat-card-title>
+              <mat-toolbar id="elementTab3" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+                <mat-form-field>
+                  <mat-select placeholder="{{'Quick_Preview'|translate}}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedTemplate"
+                    (ngModelChange)="loadTemplate(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedTemplate)">
+                    <mat-option data-toggle="tooltip" title="{{i}}" *ngFor="let i of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._templateList"
+                      value="{{i}}" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{i| translate}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </mat-toolbar>
+            </mat-card-title>
+            <mat-card-content *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus">
+              <div class="loaderContainer">
+                <img src="assets/images/loader-new.gif" alt=""/>
+              </div>
+            </mat-card-content>
+            <mat-card-content *ngIf="!this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex].previewStatus">
+              <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._isQuickPreview">
+                <div *ngSwitchCase="true">
+                  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length <2">
+                    <div class="row">
+                      <div class="col-sm-5">
+                        <div class="card-sub-content">
+                          <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length==0">
+                            <img *ngSwitchCase="true" class="img-responsive" style="margin: 0 auto" [src]="'assets/images/'+sharedDataService.publicationList[sharedDataService.activePublicationIndex]._defaultImageName"
+                              alt="">
+                            <img *ngSwitchDefault class="img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray[0].bytes}}"
+                              alt="">
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-sm-7">
+                        <div class="card-sub-content">
+                          <div class="floating-text">
+                            <strong>{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._ElementSelectedDisplayValue}}</strong>
+                          </div>
+                          <div *ngFor="let colValues of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow | displaydata">
+                            <ng-container *ngIf="colValues!='filters'">
+                              <div *ngIf="colValues == 'additionalInfos'">
+                                <div *ngFor="let aInf of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow.additionalInfos">
+                                  <div *ngIf="aInf.name==constantsService.RIC_TRANSLATION_STATUS">
+                                    <div class="loglang-block">
+                                      <div *ngFor="let loglang of aInf.nodeValues">
+                                        <img id="{{loglang}}" data-toggle="tooltip" title="{{loglang}}" class="log-lang-img ;img-responsive" src="data:image/PNG;base64,{{utilsService.findValueOfProperty(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._logLanguageFlagList,loglang)}}"
+                                          alt="{{loglang}}">
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+                            <ng-container *ngIf="colValues=='filters'">
+                              <div *ngFor="let filterCol of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow[colValues] | previewFilter">
+                                <p>{{filterCol}}:
+                                  <label style="float: center">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow[colValues][filterCol]['values']?sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow[colValues][filterCol]['values'][0]:""}}</label>
+                                </p>
+                              </div>
+                            </ng-container>
+                          </div>
+                          <div class="productState" *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow) &&  utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow.productStateDisplayValue) && utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow.productStateColorCode)">
+                            <mat-icon style="vertical-align: -7px; height: 52px; float: left; margin-right: 5px;" [style.color]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow.productStateColorCode">fiber_manual_record</mat-icon>
+                            <label style="float: center">{{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedRow.productStateDisplayValue
+                              }}
+                            </label>
+                          </div>
+                          <img style="width:35px;" *ngFor="let x of selectedlangurl" [src]="'assets/images/'+x" alt="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length >1">
+                    <div class="multipleImages">
+                      <table>
+                        <tr>
+                          <td>
+                            <div class="singleImage" *ngFor="let image of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray;let imageIndex=index">
+                              <img class="img-responsive" src="data:image/PNG;base64,{{image.bytes}}" alt="">
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="row" *ngSwitchDefault>
+                  <div class="col-md-12">
+                    <div class="card-sub-content">
+                      <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementImage.length==0">
+                        <img *ngSwitchCase="true" class="img-responsive" style="width:50px; margin: 0 auto" [src]="'assets/images/'+sharedDataService.publicationList[sharedDataService.activePublicationIndex]._defaultImageName"
+                          alt="">
+                        <img *ngSwitchDefault class="img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementImage}}"
+                          alt="">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-6 col-md-pull-10">
+        <div class="row" style="margin-right: 0px; background-color: #fff;">
+          <mat-card style="height:calc(100vh - 82px);overflow-y: auto;">
+            <app-filter [offsetTableWidth]="offsetTableWidth" switchFilterArray="element" [elementSelectedFilters]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementSelectedFilters"
+              [mainTable1]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stacklist_table" (addFilterEvent)="selectedFilterfromChild($event)"
+              (addFilterText)="selectedTextFilterfromChild($event)" (addFilterCheckbox)="selectedCheckboxFilterfromChild($event)"></app-filter>
+          </mat-card>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

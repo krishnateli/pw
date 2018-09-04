@@ -1,0 +1,83 @@
+<div class="container">
+
+  <!-- <span class="spinnerMask" *ngIf="loadingProjects" style="height: 70%;width: 90%">
+    <mat-spinner [diameter]="45" [strokeWidth]="5" color="accent" class="spinner"></mat-spinner>
+  </span> -->
+  <span class="spinner-gif" *ngIf="loadingProjects" style="height: 70%;width: 90%">
+      <!-- <mat-spinner [diameter]="45" [strokeWidth]="5" color="accent" class="spinner"></mat-spinner> -->
+      <img src="assets/images/loader-new.gif" alt=""/>
+  </span>
+
+  <!-- <span class="spinnerMask" *ngIf="loadingPublications" >
+    <mat-spinner [diameter]="45" [strokeWidth]="5" color="accent" class="spinner"></mat-spinner>
+  </span> -->
+  <span class="spinner-gif" *ngIf="loadingPublications" style="height: 70%;width: 90%">
+      <!-- <mat-spinner [diameter]="45" [strokeWidth]="5" color="accent" class="spinner"></mat-spinner> -->
+      <img src="assets/images/loader-new.gif" alt=""/>
+  </span>
+
+  <mat-card class="mat-elevation-z0" *ngIf="!loadingProjects">
+    <mat-card-content>
+      <mat-form-field>
+        <mat-select [ngModel]="currentProject" class="mat-select-value-text" placeholder="{{'CHOOSE_PROJECT'|translate}}" required="true">
+          <mat-option data-toggle="tooltip" title="{{project}}"  [ngClass]="{'just': utilsService.checkTooltip(CHOOSEPROJECT)}" #CHOOSEPROJECT 
+            *ngFor="let project of projects_array | orderBy : [project];" [value]="project" (click)="selectedProject(project)"> {{project}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <mat-form-field style="margin-left: 40px;">
+        <mat-select [(ngModel)]="masterPublication" class="mat-select-value-text" placeholder="{{'CHOOSE_MASTER_PUBLICATION'|translate}}"
+          required="true">
+          <mat-option data-toggle="tooltip" title="{{masterPublication}}"  [ngClass]="{'just': utilsService.checkTooltip(CHOOSEMASTERPUBLICATION)}" #CHOOSEMASTERPUBLICATION
+           *ngFor="let masterPublication of masterPublicationMap.get(currentProject) | orderBy : [masterPublication];" [value]="masterPublication"
+            (click)="getPublications(masterPublication)">
+            {{masterPublication}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-list *ngIf="publication_array.length !== 0">
+        <mat-list-item>
+          <div class="row pw-full-width">
+          <div class="col-md-4 col-sm-4">
+            <p class="heading-style">Publication</p>
+          </div>
+          <div class="col-md-4 col-sm-4">
+              <p class="heading-style">Product Status</p>
+          </div>
+          <div class="col-md-4 col-sm-4">
+              <p class="heading-style">Translation Status</p> 
+          </div>
+          </div>
+        </mat-list-item>
+      </mat-list>   
+      <mat-list>
+        <mat-list-item *ngFor="let publication of publication_array| orderBy : ['name']">
+          <div class="row pw-full-width">
+            <div class="col-md-4 col-sm-4">
+              <strong style="color: grey;" class="word-wrap" title="{{publication.name}}">{{publication.name}}</strong>
+            </div>
+            <div class="col-md-4 col-sm-4" *ngIf="publication.validProductStatesCount != publication.assignmentsCount">
+              <mat-icon style="color: darkorange; vertical-align: -7px; height: 0px; margin-right: 5px;margin-top: -2px;">fiber_manual_record</mat-icon>
+              {{publication.validProductStatesCount}} / {{publication.assignmentsCount}}
+            </div>
+            <div class="col-md-4 col-sm-4" *ngIf="publication.validProductStatesCount == publication.assignmentsCount">
+              <mat-icon style="color: limegreen; vertical-align: -6px; height: 0px; margin-right: 5px;margin-top: -2px;">fiber_manual_record</mat-icon>
+              {{publication.validProductStatesCount}} / {{publication.assignmentsCount}}
+            </div>
+            <div class="col-md-4 col-sm-4" style="margin-top:-23px;">
+              <div *ngFor="let logLanguage of publication.logLanguages;" style="display: inline-block">
+                <div *ngIf="this.logLanguageMap.get(logLanguage)" class="mb-span-margin">  
+                  <img style="float: left;" class="log-lang-img img-responsive active" data-toggle="tooltip" alt="{{logLanguage}}" title="{{logLanguage}}" src="data:image/PNG;base64,{{this.logLanguageMap.get(logLanguage)}}">
+                  <span class="flag-status" *ngIf="publication.logLanguageCount[logLanguage]" >{{publication.logLanguageCount[logLanguage]}} / {{publication.uniqueAssignmentsCount}}</span>
+                  <span class="flag-status" *ngIf="!publication.logLanguageCount[logLanguage]"> {{emptyLanguageCount}} / {{publication.uniqueAssignmentsCount}}</span>
+                </div>
+              </div>
+            </div>
+            <mat-divider class="pw-full-width"></mat-divider>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card> 
+</div>

@@ -1,0 +1,56 @@
+.container{
+    margin-left :-15px;
+    margin-top: -10px;
+    width: 95px;
+}
+
+.pw-app-icon {
+    padding: 0 7px;
+}
+
+.mb-app-icon {
+    position: fixed;
+    @media all and (-ms-high-contrast: none),
+    (-ms-high-contrast: active) {
+        top: 80px;
+    }
+    top: 40px;
+    width: 60px;
+}
+
+a {
+    color: black;
+}
+
+a:active {
+    color: #67A2C0 !important;
+}
+
+.nav-stacked>li+li {
+    margin-top: 0px;
+}
+
+mat-list-item {
+    cursor: pointer;
+}
+
+mat-list-item:hover {
+    background-color: #eee;
+}
+
+
+.pw-side-toolbar {
+    position: fixed;
+    top: 40%;
+    -webkit-transform: translateY(-40%);
+    -ms-transform: translateY(-40%);
+    transform: translateY(-40%);
+  }
+  
+  .mb-side-toolbar {
+    position: fixed;
+    padding-top: 4%;
+    -webkit-transform: translateY(-4%);
+    -ms-transform: translateY(-4%);
+    transform: translateY(-4%);
+  }

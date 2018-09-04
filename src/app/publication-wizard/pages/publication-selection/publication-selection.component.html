@@ -1,0 +1,30 @@
+<div class="container" style="min-height: 80vh;">
+        <div class="spinner-gif" *ngIf="publicationStatus">
+            <img src="assets/images/loader-new.gif" />
+        </div>
+
+    <mat-card class="home-card">
+        <mat-card-title>
+            <mat-toolbar id="homeTab" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+                [style.font-family]="sharedDataService._Customization.font.style">
+                <span>{{'PUBLICATION_SELECTION'|translate}}</span>
+            </mat-toolbar>
+        </mat-card-title>
+        <mat-card-content>
+            <div class="card-content">
+                <mat-tab-group dynamicHeight="true" style="padding: 0px;font-size: 15px;" [style.background-color]="sharedDataService._Customization.tabPanel.bgColor"
+                    [style.color]="sharedDataService._Customization.tabPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+                    <mat-tab label="{{'OPEN_PUBLICATION'|translate}}">
+                        <open-publication [projectsArray]="projects_array" [PublicationArray]="Publication_array" (loadPublicationSelectionData)="loadPublicationSelectionData($event)" (loadStackList)="loadStackList($event)" (showLoader)="showLoader($event)"></open-publication>
+                    </mat-tab>
+                    <mat-tab label="{{'NEW_PUBLICATION'|translate}}">
+                        <new-publication [projectsArrayNew]="projects_array" [languageList]="languageList" [last]="last" [masterpublicationArray]="masterpublication_array" (loadStackList)="loadStackList($event)" (projectChangedNewPublication)=projectChangedNewPublication($event) (showLoader)="showLoader($event)"></new-publication>
+                    </mat-tab>
+                    <mat-tab label="{{'DUPLICATE_PUBLICATION'| translate}}"> 
+                        <duplicate-publication [projectsArrayDuplicate]="projects_array" [duplicatePublicationArray]="duplicatePublication_array" (loadPublicationSelectionData)="loadPublicationSelectionData($event)" (loadStackList)="loadStackList($event)" (showLoader)="showLoader($event)"></duplicate-publication>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </mat-card-content>
+    </mat-card>
+</div>

@@ -1,0 +1,51 @@
+  <div class="pw-ver-padd-sm">
+      <form name="Form" [formGroup]="openPublicationForm" (ngSubmit)="openPublication($event, openPublicationForm.valid)" (keyup.enter)="openPublication($event, openPublicationForm.valid)">
+          <div class="row">
+              <div class="col-sm-6 col-lg-6">
+                  <mat-form-field class="pw-ver-padd-sm pw-full-width">
+                      <mat-select id="sel_proj" placeholder="{{'CHOOSE_PROJECT'|translate}}" (selectionChange)="projectChanged(selectedProject)"
+                          formControlName="project" [(ngModel)]="selectedProject" class="pw-full-width" required="true">
+                          <mat-option data-toggle="tooltip" id="{{i.name}}" [value]="i" title="{{i.name}}" [ngClass]="{'just': utilsService.checkTooltip(CHOOSEPROJECT)}"
+                              #CHOOSEPROJECT *ngFor="let i of projects_array" [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style">
+                              {{i.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6 col-lg-6">
+                  <mat-form-field class="pw-ver-padd-sm pw-full-width">
+                      <mat-select id="sel_pub" placeholder="{{'CHOOSE_PUBLICATION'|translate}}" (selectionChange)="publicationChanged(selectedPublication)"
+                          [(ngModel)]="selectedPublication" formControlName="publication" class="pw-full-width" (selectionChange)="setFocus(dropdown)"
+                          required="true">
+                          <mat-option *ngFor="let j of Publication_array  | orderBy : ['name']" [value]="j" data-toggle="tooltip" title="{{j.name}}"
+                              [ngClass]="{'just': utilsService.checkTooltip(CHOOSEPUBLICATION)}" #CHOOSEPUBLICATION
+                              [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style"
+                              (click)="setFocus(dropdown)">
+                              {{j.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6 col-lg-6">
+                  <span *ngIf="((author!='')&&(author!='Unknown')) && selectedPublication" class="labelText">{{'AUTHOR'|translate}}: {{author}}</span>
+                  <br>
+                  <span *ngIf="date!='' && selectedPublication" class="labelText">{{'CREATED'|translate}}: {{date}}</span>
+              </div>
+              <div class="col-sm-6 col-lg-6">
+                  <span *ngIf="description!=''" class="labelText">{{'DESCRIPTION'|translate}}: {{description}}</span>
+              </div>
+              <div class="col-sm-12">
+                  <button class="pull-right" id="open_pub_button" type="submit" mat-raised-button [ngStyle]="setbuttonstyleOpenPub()" #dropdown
+                      >{{'OPEN_PUBLICATION'|translate}}</button>
+              </div>
+          </div>
+          <!-- 
+          <div class="right">
+              
+          </div> -->
+      </form>
+  </div>

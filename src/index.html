@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+
+  <meta http-equiv="Content-Security-Policy" content="
+  frame-src	'self'; 
+  style-src 'self' 'unsafe-inline'; 
+  img-src 'self' data:; 
+  script-src 'self' 'unsafe-eval' ;" />
+
+  <title>InBetween</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link rel="icon" href="favicon.ico" type="image/x-icon" />
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+  <style type="text/css">
+    #noscriptmsgdiv {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #D31246;
+    }
+  </style>
+
+</head>
+
+<body>
+  <app-root>
+
+    <noscript>
+      <style type="text/css">
+        .pagecontainer {
+          display: none;
+        }
+      </style>
+      <div id="noscriptmsgdiv" class="noscriptmsg">
+        <div style="text-align: center; font-weight: 700;">
+          <h1>
+            You don't have javascript enabled.
+            <br>
+          </h1>
+          <h3>Please enable it to use IB Publication Wizard.</h3>
+          <p>
+            <br> (Sie haben JavaScript nicht aktiviert. Bitte aktivieren Sie JavaScript in Ihren Browsereinstellungen, um Publication
+            Wizard verwenden zu können .)
+            <br>
+            <br>
+            <a target="_blank" href="http://www.enable-javascript.com/" rel="noopener noreferrer">http://www.enable-javascript.com/</a>
+          </p>
+        </div>
+      </div>
+    </noscript>
+  </app-root>
+</body>
+
+</html>

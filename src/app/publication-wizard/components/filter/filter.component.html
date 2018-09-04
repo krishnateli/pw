@@ -1,0 +1,67 @@
+<mat-card-title>
+  <mat-toolbar id="elementTab4" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+    <span>Filter</span>
+    <span class="element-spacer"></span>
+    <mat-icon data-toggle="tooltip" title="Clear Filter" style="cursor: pointer;" (click)="clearList()" class="builder-icon" style="font-size: 18px;cursor: pointer;">remove_circle_outline</mat-icon>
+  </mat-toolbar>
+</mat-card-title>
+<mat-card-content>
+<span class="spinner-gif2" *ngIf="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex].loaderStatus">
+ <img src="assets/images/loader-new.gif"  alt="Loading..." />
+</span>
+  <div class="card-content" style="z-index:1" class="filter-container">
+      <div *ngIf="checkIfStatusConfigured()">
+      <span (click)="clearFilter('status',status)" class="close">
+          <mat-icon class="builder-icon" style="font-size: 18px; cursor: pointer;">clear</mat-icon>
+        </span>
+        <mat-form-field class="full-width">
+        <mat-select placeholder="Status" [(ngModel)]="this.selectedFilters['status']" >
+            <mat-option *ngFor="let status of statusArray" (click)="setFilter('status',status.valid)" [value]="status.valid" [style.color]="sharedDataService._Customization.dropDownSelection.color"
+              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+              {{ status.state }}
+            </mat-option>
+        </mat-select>
+      </mat-form-field>
+      </div>
+    <div *ngFor="let colValues of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject;let i=index">
+      <span (click)="clearFilter(colValues.filterName,colValues.filterObj.type)" [attr.id]="'id'+colValues" class="close">
+          <mat-icon class="builder-icon" style="font-size: 18px; cursor: pointer;">clear</mat-icon>
+        </span>
+      <div *ngIf="colValues.filterObj.type=='dropdown'">
+      <mat-form-field class="full-width">
+        <mat-select placeholder="{{colValues.filterName}}" [(ngModel)]="this.selectedFilters[colValues.filterName]">
+          <mat-option data-toggle="tooltip" title="{{row1}}" *ngFor="let row1 of this.mainTable | unique: colValues.filterName" (click)="setFilter(colValues.filterName,row1,i)"
+            [value]="row1" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+            [style.font-family]="sharedDataService._Customization.font.style">
+            {{row1}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      </div>
+      <div *ngIf="colValues.filterObj.type=='textfield'">
+        <mat-form-field class="full-width">
+          <input matInput placeholder="{{colValues.filterName}}" [ngModel]="searchQuery1" (ngModelChange)="textFilter($event,colValues.filterName)" value="searchQuery1" id="{{colValues.filterName.split(' ').join('_')}}">
+        </mat-form-field>
+      </div>
+      <div *ngIf="colValues.filterObj.type=='checkbox'">
+        <div class="btn-group" dropdown>
+          <button dropdownToggle type="button" class="checkbox-button btn btn-default dropdown-toggle" (click)="toggleSelect(i)" [ngStyle]="{color:this.selectedFilters[colValues.filterName]?.length>0 ? '#67a2c0' : '#555'}">
+            <span class="pull-left">{{colValues.filterName}}</span><span class="selectedChecklistItem"></span>
+            <span class="caret pull-right" style="margin-left: 5px;margin-top: 10px;"></span>
+          </button>
+          <ul class="dropdown-menu" [ngStyle]="{display:sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject[i]._isOpen ? 'none' : 'block'}" style="display: none">
+            <li *ngFor="let item of this.mainTable | unique: colValues.filterName; let k = index">
+              <a (click)="selectcheck(item,colValues.filterName)" data-toggle="tooltip" title="{{item|translate}}" style="cursor: pointer;" class="dropdown-item">
+                <mat-icon *ngIf="!checkIfNotSelected(item,colValues.filterName)" class="builder-icon" style="font-size: 18px;cursor: pointer;margin-top: 5px;">check_box</mat-icon>
+                <mat-icon *ngIf="checkIfNotSelected(item,colValues.filterName)" class="builder-icon" style="font-size: 18px;cursor: pointer;margin-top: 5px;">check_box_outline_blank</mat-icon>
+                <span class="checklistStyle">{{item}}</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div style="display: none" (click)="toggleSelect(i)" class="filter-mask" [ngStyle]="{display:sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject[i]._isOpen ? 'none' : 'block'}">
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card-content>

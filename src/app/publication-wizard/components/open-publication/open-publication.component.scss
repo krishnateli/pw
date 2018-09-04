@@ -1,0 +1,9 @@
+@media all and (-ms-high-contrast: none),
+(-ms-high-contrast: active) {
+  .labelText {
+    margin-left: 1px;
+  }
+}
+.labelText {
+    color: #555!important;
+  }

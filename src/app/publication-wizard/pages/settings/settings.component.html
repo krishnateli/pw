@@ -1,0 +1,287 @@
+<div class="container-main">
+  <ng-template [ngIf]="sharedDataService.publicationList.length>0">
+    <div class="row">
+      <div class="col-md-6">
+        <mat-card>
+          <mat-card-title>
+            <mat-toolbar [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span>{{'PUBLICATION_PROPERTIES'|translate}}</span>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <div class="row box">
+              <div class="col-md-8">
+                <mat-form-field class="settings-full-width">
+                  <input matInput [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.name"
+                    (selectionChange)="onChangeProperties()" placeholder="{{'NAME'|translate}}" value="" required>
+                </mat-form-field>
+                <mat-form-field class="settings-full-width">
+                  <input matInput [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.redactionProperties.subject"
+                    (selectionChange)="onChangeProperties()" placeholder="{{'DESCRIPTION'|translate}}" value="">
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <div class="loglang-block">
+                  <div *ngFor="let loglang of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._arrayLogLanguageFlagList">
+                    <input type="checkbox" class="log-lang-check" />
+                    <img id="{{loglang}}" data-toggle="tooltip" title="{{loglang}}" class="log-lang-img img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._logLanguageFlagList[loglang]}}"
+                      alt="{{loglang}}" (click)="selected_log_lang(loglang)" [ngStyle]="checkIfSelected(loglang)">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="margin: 10px 0px 0px 0px;" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.variables.length>0 && sharedDataService._Customization.generalSettings.visible == 'true'">
+          <mat-card-title>
+            <mat-toolbar [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span>{{'GENERAL_SETTINGS'|translate}}</span>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content style="max-height: 150px;overflow-y: scroll;padding-top: 10px;padding-bottom: 80px;overflow-x: hidden;">
+            <div class="row box">
+              <div *ngFor="let variable of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.variables">
+                <div class="col-md-6">
+
+                  <div *ngIf="variable.name!=constantsService.IGNORE_PRODUCT_STATE && variable.parentId!=constantsService.IGNORE_PRODUCT_STATE_PARENT_ID ">
+
+                    <mat-form-field *ngIf="variable.type=='Vector' && !variable.withLOV" class="settings-full-width">
+                      <mat-select [ngModel]="variable._selValue" (ngModelChange)="variable.selectedValues.value = $event" (selectionChange)="onChangeOfVariable(variable.selectedValues.value, variable)"
+                        placeholder="{{variable.translations[this.translateService.currentLang.toUpperCase()] ? variable.translations[this.translateService.currentLang.toUpperCase()] : variable.name}}"
+                        name="" multiple>
+                        <mat-option class="multiColumn" *ngFor="let x of variable._allValues" [value]="x.value" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                          [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.font-family]="sharedDataService._Customization.font.style">
+                          {{x.value}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <mat-form-field *ngIf="((variable.type=='Single') && variable.withLOV) || (variable.type=='Vector' && variable.withLOV)"
+                      class="settings-full-width">
+                      <mat-select [ngModel]="this.ibUtilsService.showSelectedOrDefaultValue(variable)" (ngModelChange)="variable.selectedValues.value = $event"
+                        (selectionChange)="onChangeOfVariable(variable.selectedValues.value, variable)" placeholder="{{variable.translations[this.translateService.currentLang.toUpperCase()] ? variable.translations[this.translateService.currentLang.toUpperCase()] : variable.name}}"
+                        name="">
+                        <mat-option *ngFor="let x of variable.values" value="{{x.value}}" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                          [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.font-family]="sharedDataService._Customization.font.style">
+                          {{x.value}}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-form-field class="settings-full-width" *ngIf="(variable.type=='Single') &&(variable.valueType=='Number') && !variable.withLOV">
+                      <input [ngModel]="this.ibUtilsService.showSelectedOrDefaultValue(variable)" (ngModelChange)="variable.selectedValues.value = $event"
+                        (input)="onChangeOfVariable(variable.selectedValues.value, variable)" matInput placeholder="{{variable.translations[this.translateService.currentLang.toUpperCase()] ? variable.translations[this.translateService.currentLang.toUpperCase()] : variable.name}} ">
+                    </mat-form-field>
+                    <mat-form-field class="settings-full-width" *ngIf="(variable.type=='Single') &&(variable.valueType=='Text') && !variable.withLOV">
+                      <input matInput [ngModel]="this.ibUtilsService.showSelectedOrDefaultValue(variable)" (ngModelChange)="variable.selectedValues.value = $event"
+                        (input)="onChangeOfVariable(variable.selectedValues.value, variable)" matInput placeholder="{{variable.translations[this.translateService.currentLang.toUpperCase()] ? variable.translations[this.translateService.currentLang.toUpperCase()] : variable.name}} ">
+                    </mat-form-field>
+                    <div class="settings-full-width" *ngIf="(variable.type=='Single') && (variable.valueType=='Boolean')">
+                      <mat-checkbox [ngModel]="this.ibUtilsService.showSelectedOrDefaultValue(variable)==1" (ngModelChange)="variable.selectedValues.value = $event"
+                        (change)="onChangeOfVariable(variable.selectedValues.value, variable)">{{variable.translations[this.translateService.currentLang.toUpperCase()]? variable.translations[this.translateService.currentLang.toUpperCase()]
+                        : variable.name}} </mat-checkbox>
+                    </div>
+                    <div *ngIf="(variable.type=='Single')&&(variable.valueType=='Date')">
+                      <div style="width: 100%;">
+                        <span>{{variable.translations[this.translateService.currentLang.toUpperCase()] ? variable.translations[this.translateService.currentLang.toUpperCase()]
+                          : variable.name}} </span>
+                        <button class="ib-no-min-width" mat-icon-button (click)="resetDateValue(variable)">
+                          <mat-icon class="refresh-icon">refresh</mat-icon>
+                        </button>
+                      </div>
+                      <div *ngIf="(variable.dateFormat.toUpperCase().includes('DD'))">
+                        <mat-form-field style="width: 120px;">
+                          <input matInput hidden="true" [matDatepicker]="picker" [(ngModel)]="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._variableDate"
+                            (ngModelChange)="onChangeOfVariable($event,variable)">
+                          <input disabled="true" style="background-color: white;border: none" placeholder="{{variable.dateFormat.toUpperCase()}}" [ngModel]="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._variableDate">
+                          <mat-datepicker-toggle class="datePicker" matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker #picker></mat-datepicker>
+                        </mat-form-field>
+                        <mat-datepicker #picker></mat-datepicker>
+                      </div>
+                      <div *ngIf="!(variable.dateFormat.toUpperCase().includes('DD'))">
+                        <mat-form-field style="width: 30%;">
+                          <mat-select placeholder="Month" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._variableMonth"
+                            floatPlaceholder="never" (selectionChange)="onChangeOfDate($event,variable)">
+                            <mat-option *ngFor="let month of constantsService.months" [value]="month" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.font-family]="sharedDataService._Customization.font.style">
+                              {{month}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field style="margin-left: 10px;width: 30%;">
+                          <mat-select placeholder="Year" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._variableYear"
+                            floatPlaceholder="never" (selectionChange)="onChangeOfDate($event,variable)">
+                            <mat-option *ngFor="let year of years" [value]="year" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.font-family]="sharedDataService._Customization.font.style">
+                              {{year}}
+                            </mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div *ngIf="variable.name==constantsService.IGNORE_PRODUCT_STATE">
+                    <div [hidden]="true">
+                      {{ignoreProductState(this.translateService.currentLang.toUpperCase())}}
+                    </div>
+                    <div class="pw-full-width" style="margin-top: 10px;" *ngIf="(variable.type=='Single')&&(variable.valueType=='Boolean')">
+                      <mat-checkbox [ngModel]="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._ignoreProductStateFlag"
+                        (ngModelChange)="variable.selectedValues.value = $event" (change)="onChangeOfVariable(variable.selectedValues.value, variable)">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._ignoreProductStateLang}}</mat-checkbox>
+                    </div>
+
+                    <div *ngIf="(this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._ignoreProductStateFlag)">
+                      <br>
+                      <span style="margin-bottom: 15px;display: block">
+                        <label>{{'CURRENT_USER'|translate}} :</label> {{sharedDataService.username}}</span>
+
+                      <mat-form-field style="margin-top: 10px;display: block">
+                        <input matInput [autofocus]="true" [(ngModel)]="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._ignoreProductStateData"
+                          (ngModelChange)="onChangeOfVariable($event, sharedDataService.publicationList[sharedDataService.activePublicationIndex]._ignoreProductStateTextVariable)"
+                          mdInput placeholder="{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._ignoreProductStateText}}"
+                          required="true">
+                      </mat-form-field>
+                      <span style="font-size: 13px;font-style: italic;">{{'PUBLICATION_WATERMARK'|translate}}</span>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="margin-top: 10px" *ngIf="sharedDataService._Customization.editDataSource.visible == 'true'">
+          <mat-card-title>
+            <mat-toolbar [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <ng-template [ngIf]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length>0">
+                <span>{{'EDIT_DATA_SOURCE'|translate}}</span>
+              </ng-template>
+              <ng-template [ngIf]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length<1">
+                <span data-toggle="tooltip" title="{{'DATA_SOURCE_CANNOT_BE_MODIFIED'|translate}}">{{'DB_DATA_SOURCE'|translate}}</span>
+              </ng-template>
+              <span class="refresh-spacer"></span>
+              <ng-template [ngIf]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length>0">
+                <button class="ib-no-min-width" mat-icon-button [disabled]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].showSettingsDataSourceLoader"
+                  (click)="refreshDataSources()">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+                <ng-template [ngIf]="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataSourceFetchtime)">
+                  <span for="">{{'LAST_REFRESH'|translate}}: {{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataSourceFetchtime}}</span>
+                </ng-template>
+              </ng-template>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <!-- <span class="spinnerMask" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].showSettingsDataSourceLoader">
+              <mat-spinner [diameter]="45" [strokeWidth]="5" color="accent" class="spinner"></mat-spinner>
+            </span> -->
+            <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].showSettingsDataSourceLoader">
+              <img src="assets/images/loader-new.gif" />
+            </span>
+            <div class="row box">
+              <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataRefreshFlag" [class]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._messageClass"
+                class="" style="margin:0px 10px 10px 10px;">
+                <button type="button" class="close" (click)="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._dataRefreshFlag=false;"
+                  data-dismiss="alert" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button> {{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataRefreshMessege |translate:
+                sharedDataService.publicationList[sharedDataService.activePublicationIndex]._params }}
+              </div>
+
+              <div class="col-xs-8">
+                <label for="">{{'CURRENT_DATA_SOURCE'|translate}}</label>
+                <br>
+                <label for="" style="color:#6ba7d6">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._currentDSFile}}</label>
+                <mat-form-field class="settings-full-width">
+                  <mat-select data-toggle="tooltip" title="{{((sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length<1)?'DATA_SOURCE_CANNOT_BE_MODIFIED' : '')|translate}}"
+                    [disabled]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length<1"
+                    placeholder="{{'CHANGE_DATA_SOURCE'|translate}}" name="" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedDataSouce"
+                    (selectionChange)="dataSourceChanged(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedDataSouce)">
+                    <mat-option *ngFor="let eachDataFiles of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles"
+                      [value]="eachDataFiles" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                      [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{eachDataFiles}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </div>
+              <div *ngIf="this.dataXMLUploadEnabled">
+                <div class="col-xs-8">
+                  <mat-form-field class="settings-full-width">
+                    <input [disabled]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length<1" matInput
+                      placeholder="{{'UPLOAD_DATA_SOURCE'|translate}}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._uploadedFileName"
+                      value="{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._uploadedFileName}}">
+                  </mat-form-field>
+                  <button (click)="uploadDataSourceXMLFile()" mat-button mat-raised-button [ngStyle]="setbuttonstyleUpload()" [disabled]="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataSourceUploadStatus">{{'UPLOAD'|translate}}</button>
+                </div>
+                <div class="col-xs-4">
+                  <button [disabled]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._dataFiles.length<1" mat-button
+                    mat-raised-button [ngStyle]="button_enabled_style" (click)="uploadDocument()">{{'BROWSE'|translate}}</button>
+                  <input #myInput type="file" accept=".xml" style="display:none;" id="file" name="file" (change)="handleFileSelect($event)"
+                  />
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div class="col-md-6">
+        <mat-card>
+          <mat-card-title>
+            <mat-toolbar [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span>{{'SINGLE_DOUBLE_PAGE_VIEW'|translate}}</span>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <div class="row box">
+              <mat-radio-group class="pagePosition">
+                <div class="col-xs-5">
+                  <mat-radio-button name="pageView" [value]="1" (click)="changePageView(true)" [checked]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">&nbsp;&nbsp;{{'DOUBLE_PAGE'|translate}}
+                    <br>
+                    <img class="img-responsive" src="assets/images/doublepage.png" alt="Double Page">
+                  </mat-radio-button>
+                </div>
+                <div class="col-xs-5">
+                  <mat-radio-button name="pageView" [value]="0" (click)="changePageView(false)"[checked]="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">&nbsp;&nbsp;{{'SINGLE_PAGE'|translate}}
+                    <br>
+                    <img class="img-responsive" src="assets/images/singlepage.png" alt="Double Page">
+                  </mat-radio-button>
+                </div>
+              </mat-radio-group>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card style="margin-top: 10px">
+          <mat-card-title>
+            <mat-toolbar [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span>{{'STARTING_PAGE'|translate}}</span>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <div class="row box">
+              <mat-radio-group class="pagePosition" [disabled]="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">
+                <div class="col-xs-5">
+                  <mat-radio-button name="pageStart" [value]="1" (click)="changePageStart(true)" [checked]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage?sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.startOnLeftPage:false && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">&nbsp;&nbsp;{{'LEFT'|translate}}
+                    <br>
+                    <img class="img-responsive" src="assets/images/left.png" alt="Left">
+                  </mat-radio-button>
+                </div>
+                <div class="col-xs-5">
+                  <mat-radio-button name="pageStart" [value]="0" (click)="changePageStart(false)" [checked]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage?(!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.startOnLeftPage):false && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">&nbsp;&nbsp;{{'RIGHT'|translate}}
+                    <br>
+                    <img class="img-responsive" src="assets/images/right.png" alt="Right">
+                  </mat-radio-button>
+                </div>
+              </mat-radio-group>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </ng-template>
+</div>

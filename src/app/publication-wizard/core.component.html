@@ -1,0 +1,32 @@
+<app-header currentApp="PublicationWizard" [isLogin]="utilsService.isLogged()" (synchronize)="synchronizeWithServerPopUp()"></app-header>
+
+<app-side-bar currentApp="PublicationWizard" [sideBarData]="navigationPW" [publicationList]="sharedDataService.publicationList"></app-side-bar>
+
+<div [ngStyle]="{'margin-left':(this.sharedDataService.activePublication == null && this.sharedDataService.activePublication == undefined) ? '0px' : '45px'}">
+    <div id="publication-tabs" *ngIf="sharedDataService.showTabs">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-8">
+                    <mat-chip-list>
+                        <mat-chip color="default" [selected]="isActivatePublication(publicationdto)" (click)="ibUtilsService.activatePublication(publicationdto)"
+                            *ngFor="let publicationdto of sharedDataService.publicationList" style="cursor:pointer;position: relative;border-radius: 1px; margin: 0px 0px 5px 0;height: 30px;border-left:1px solid #eee;"
+                            placeholder="search" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+                            [style.font-family]="sharedDataService._Customization.font.style">
+                            <span data-toggle="tooltip" title="{{publicationdto._respondata.publication.project}}: {{publicationdto._respondata.publication.name}}"
+                                for="" style="margin-right:15px;font-size: 13px;">
+                                <span [hidden]="!publicationdto._isChange">*</span>{{publicationdto._respondata.publication.name}}</span>
+                            <span (click)="closepublication(publicationdto, $event)" class="close-publication">X</span>
+                        </mat-chip>
+                    </mat-chip-list>
+                </div>
+                <div class="col-sm-4" *ngIf="sharedDataService._Customization.customerLogo.path !== ''">
+                    <span class="text-modify">{{sharedDataService._Customization.customerLogo.text}}</span>
+                    <div class="img-modify">
+                        <img src="custom/{{sharedDataService._Customization.customerLogo.path}}" style="width:200px"  alt="Logo"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <router-outlet></router-outlet>
+</div>

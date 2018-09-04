@@ -1,0 +1,66 @@
+<div class="container-main">
+
+  <div class="col-md-12 icon-padding">
+    <mat-icon class="pull-right header_settings" (click)="openDialog()">settings</mat-icon>
+  </div>
+
+  <div [ngClass]="(false)?'col-md-8':'col-md-12 right_padding'">
+    <!-- <div [ngClass]="(toDoList)?'col-md-8':'col-md-12 right_padding'"> -->
+    <div class="row">
+      <mat-expansion-panel [expanded]="true" *ngIf="productState" class="arrow-icon" hideToggle="true" #arrowIconProductState>
+        <mat-expansion-panel-header class="headers">
+          <mat-panel-title>
+            <span class="heading" style="margin-top: 5px;">{{'PRODUCT_STATE'|translate}}</span>
+          </mat-panel-title>
+          <mat-icon *ngIf="!arrowIconProductState.expanded">arrow_drop_up</mat-icon>
+          <mat-icon *ngIf="arrowIconProductState.expanded">arrow_drop_down</mat-icon>
+        </mat-expansion-panel-header>
+        <div>
+          <mat-icon class="pull-right header_settings" style="font-size: 26px;font-weight: bold;margin-right: 20px;margin-top: 5px;" (click)="refreshProductStatistics()">refresh</mat-icon>
+        </div>
+        <section [ngClass]="(false)?'statistics_minimum':'statistics_maximum'">
+          <!-- <section [ngClass]="(activityStream)?'statistics_minimum':'statistics_maximum'"> -->
+          <!-- Product State Component Here -->
+          <app-statistics-of-product-state></app-statistics-of-product-state>
+        </section>
+      </mat-expansion-panel>
+
+      <div *ngIf="productState" hidden="true">
+        <br>
+      </div>
+
+      <div hidden="true">
+        <mat-expansion-panel [expanded]="true" *ngIf="activityStream" class="arrow-icon" hideToggle="true" #arrowIconActivity>
+          <mat-expansion-panel-header class="headers">
+            <mat-panel-title>
+              <span class="heading" style="margin-top: 5px;">{{'ACTIVITY_STREAM'|translate}}</span>
+            </mat-panel-title>
+            <mat-icon *ngIf="!arrowIconActivity.expanded">arrow_drop_up</mat-icon>
+            <mat-icon *ngIf="arrowIconActivity.expanded">arrow_drop_down</mat-icon>
+          </mat-expansion-panel-header>
+          <section [ngClass]="(productState)?'activityStream_minimum':'activityStream_maximum'">
+            <!-- Activity Stream Component Here -->
+          </section>
+        </mat-expansion-panel>
+      </div>
+    </div>
+  </div>
+
+    <div hidden="true">
+      <div [ngClass]="(productState||activityStream)?'col-md-4':'col-md-12'">
+        <mat-expansion-panel [expanded]="true" *ngIf="toDoList" class="arrow-icon" hideToggle="true" #arrowIconToDoList>
+          <mat-expansion-panel-header class="headers">
+            <mat-panel-title>
+              <span class="heading" style="margin-top: 5px;">{{'TO_DO_LIST'|translate}}</span>
+            </mat-panel-title>
+            <mat-icon *ngIf="!arrowIconToDoList.expanded">arrow_drop_up</mat-icon>
+            <mat-icon *ngIf="arrowIconToDoList.expanded">arrow_drop_down</mat-icon>
+          </mat-expansion-panel-header>
+          <section class="toDoList">
+            <!-- To Do List Component Here -->
+          </section>
+        </mat-expansion-panel>
+      </div>
+    </div>
+
+  </div>

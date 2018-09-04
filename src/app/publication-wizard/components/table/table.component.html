@@ -1,0 +1,104 @@
+<table style="table-layout: fixed;" class="table" [mfData]="mainTable" #stacklist="mfDataTable" [mfRowsOnPage]="noOfStackElementsToDisplay">
+  <div class="divWidth" dnd-droppable (onDropSuccess)="onElementDrop($event)">
+    <div [style.margin-left.px]="getStackScrollValue()">
+      <thead [style.background-color]="sharedDataService._Customization.tableHeader.bgColor" [style.color]="sharedDataService._Customization.tableHeader.color" [style.font-family]="sharedDataService._Customization.font.style">
+        <tr>
+          <th [style.max-width.px]="setTableColumnWidth()"
+            [style.min-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()">
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <!-- <mfDefaultSorter by="id">{{'id'| translate}}</mfDefaultSorter> -->
+            <a (click)="columnSorter(0)" style="cursor:pointer;"> {{'id'| translate}} <span [ngClass] ="clickSort ? 'glyphicon glyphicon-triangle-top' : 'glyphicon glyphicon-triangle-bottom'"></span></a>
+          </th>
+          <th [style.max-width.px]="setTableColumnWidth()"
+            [style.min-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()">
+            <!-- *ngIf="columnsInTable.length != 0"  -->
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <!-- <mfDefaultSorter by="displayValue">{{'displayValue'| translate}}</mfDefaultSorter> -->
+            <a (click)="columnSorter(1)" style="cursor:pointer;"> {{'displayValue'| translate}} <span [ngClass] ="clickSort ? 'glyphicon glyphicon-triangle-top' : 'glyphicon glyphicon-triangle-bottom'"></span></a>
+          </th>
+          <th [style.max-width.px]="setTableColumnWidth()"
+            [style.min-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()"
+            *ngFor="let colValues of stacklist.data | customfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject : tableType let i = index; let last = last">
+            <!-- *ngIf="!last" -->
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <a (click)="columnSorter(i+2)" style="cursor:pointer;"> {{colValues}} <span [ngClass] ="clickSort ? 'glyphicon glyphicon-triangle-top' : 'glyphicon glyphicon-triangle-bottom'"></span></a>
+          </th>
+        </tr>
+      </thead>
+    </div>
+    <tbody id="tableBody" class="stacktable" [ngClass]="{'smallTable': tableWidth == 'small','bigTable': tableWidth == 'large'}" style="overflow: auto; display:block"
+      (scroll)="verticalStackScroll($event)">
+      <!-- [dragEnabled]="draggableColumn" added on element selection page table -->
+      <tr [ngStyle]="checkIfStackElementIsSelected(stack)" dnd-draggable [dragEnabled]="(tableType == 'Basket' && page == 'Element') ? false : true" [dragData]="page == 'Element'? stack : {dropType:'stackelement', data: stack}"
+        *ngFor="let stack of stacklist.data; let i = index" (click)="page == 'Element' ? setStacklistRow(stack, $event) : setbuilderRow(stack, $event)"
+        [class.blur]="page != 'Element' ? checkIfElementAddedtopage(stack) : false">
+        <div draggable="true">
+          <td dnd-droppable (onDropSuccess)="oneElementDrop($event)" [style.max-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()"
+            data-toggle="tooltip" title="{{stack.id}}">{{stack.id}}&nbsp;</td>
+          <td dnd-droppable (onDropSuccess)="oneElementDrop($event)" [style.max-width.px]="setTableColumnWidth()" [style.min-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()"
+            data-toggle="tooltip" title="{{stack.displayValue}}">{{stack.displayValue}}&nbsp;</td>
+          <td dnd-droppable (onDropSuccess)="oneElementDrop($event)" [style.max-width.px]="setTableColumnWidth()"
+            [style.width.px]="setTableColumnWidth()"
+            data-toggle="tooltip" title="{{stack['filters'][colValues]?stack['filters'][colValues]['values']?stack['filters'][colValues]['values'][0]:'':''}}"
+            *ngFor="let colValues of stacklist.data | customfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject : tableType">
+            {{stack['filters'][colValues]?stack['filters'][colValues]['values']?stack['filters'][colValues]['values'][0]:"":""}}&nbsp;
+          </td>
+        </div>
+      </tr>
+    </tbody>
+  </div>
+</table>
+
+<!-- <table *ngIf="(page == 'builderBasket') || (page == 'builderStack')" style="width: 100%;" class="table" [mfData]="stackTable"
+  #stacklist="mfDataTable" [mfRowsOnPage]="noOfStackElementsToDisplay">
+  <div style="min-height:270px" class="divWidth basket_table">
+    
+    <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].dataStatus">
+      <img src="assets/images/loader-new.gif" />
+    </span>
+    <div [style.margin-left.px]="getStackScrollValue()">
+      <thead [style.background-color]="customStyleService.TableHeaderBgcolor" [style.color]="customStyleService.TableHeaderForeground">
+        <tr>
+          <th [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+            [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth">
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <mfDefaultSorter by="id">{{'id'| translate}}</mfDefaultSorter>
+          </th>
+          <th [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+            [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth">
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <mfDefaultSorter by="displayValue">{{'displayValue'| translate}}</mfDefaultSorter>
+          </th>
+          <th *ngFor="let colValues of stacklist.data | customfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject : tableType"
+            [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+            [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth">
+            <span class="ui-column-resizer" (mousedown)="onMouseDown($event)"></span>
+            <mfDefaultSorter by="{{colValues}}">{{colValues}}</mfDefaultSorter>
+          </th>
+        </tr>
+      </thead>
+    </div>
+    <tbody class="stacktable smallTable" style="overflow: auto;display:block" (scroll)="verticalStackScroll($event)">
+      <tr [class.active]="checkIfStackElementIsSelected(stack)" dnd-draggable [dragEnabled]="true" [dragData]="{dropType:'stackelement', data: stack}"
+        *ngFor="let stack of stacklist.data; let i = index" (click)="setbuilderRow(stack, $event)" [class.blur]="checkIfElementAddedtopage(stack)">
+        <td [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          data-toggle="tooltip" title="{{stack.id}}">{{stack.id}}&nbsp;</td>
+        <td [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          data-toggle="tooltip" title="{{stack.displayValue}}">{{stack.displayValue}}&nbsp;</td>
+        <td [style.width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          [style.max-width.px]="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._BuilderColumnWidth"
+          *ngFor="let colValues of stacklist.data | customfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject : tableType">
+          <span *ngIf="utilsService.isObjNotEmpty(stack['filters'][colValues]) && stack['filters'][colValues]['values'] != null && stack['filters'][colValues]['values'] != undefined"
+            data-toggle="tooltip" title="{{stack['filters'][colValues]?stack['filters'][colValues]['values'][0]:''}}">{{stack['filters'][colValues]?stack['filters'][colValues]['values'][0]:""}}</span>&nbsp;
+        </td>
+      </tr>
+    </tbody>
+  </div>
+</table> -->

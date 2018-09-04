@@ -1,0 +1,45 @@
+<mat-card style="width: 400px;">
+
+  <div class="widget-heading">
+    <span style="margin-left:10px;letter-spacing: 3px;font-size: 15px;">{{'WIDGET_SETTING' | translate}}</span>
+  </div>
+
+  <mat-card-content>
+
+    <section class="widget-section">
+      <div class="col-sm-4">
+        <span style="font-size: 16px;"><strong>{{'DISPLAY' | translate}} :</strong></span>
+      </div>
+    </section>
+
+    <section class="widget-section">
+      <div class="col-sm-8">
+        <span>{{'PRODUCT_STATE' | translate}}</span>
+      </div>
+      <div class="col-sm-4">
+        <mat-slide-toggle (selectionChange)="toggleProductState()" [checked]=productState></mat-slide-toggle>
+      </div>
+    </section>
+
+    <div hidden="true">
+      <section class="widget-section">
+        <div class="col-sm-8">
+          <span>{{'ACTIVITY_STREAM' | translate }}</span>
+        </div>
+        <div class="col-sm-4">
+          <mat-slide-toggle (selectionChange)="toggleActivityStream()" [checked]=activityStream></mat-slide-toggle>
+        </div>
+      </section>
+    
+      <section class="widget-section">
+        <div class="col-sm-8">
+          <span>{{'TO_DO_LIST' | translate}}</span>
+        </div>
+        <div class="col-sm-4">
+          <mat-slide-toggle (selectionChange)="toggleToDoList()" [checked]=toDoList></mat-slide-toggle>
+        </div>
+      </section>
+    </div>
+
+  </mat-card-content>
+</mat-card>

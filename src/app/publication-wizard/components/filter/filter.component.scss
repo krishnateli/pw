@@ -1,0 +1,84 @@
+.card-content {
+  padding: 20px;
+}
+
+.close {
+  z-index: 1;
+  color: grey;
+  cursor: pointer;
+  margin-top: 20px;
+  font-size: inherit;
+  opacity: 0.6;
+}
+.checklistStyle{
+  font-size: 14px;
+  vertical-align: 3px;
+  margin-left: 5px; 
+}
+.close:hover {
+  opacity: 0.9;
+}
+
+.builder-icon {
+  padding: 0 7px;
+  fill: #fff;
+}
+
+.hidden {
+  display: none;
+}
+
+.element-spacer {
+  flex: 1 1 auto;
+}
+
+.checkbox-button {
+  height: 25px;
+  width: 100%;
+  color: #555;
+  padding: 1px 0px 0px 3px;
+}
+
+.full-width {
+  width: calc(100% - 25px);
+  padding: 0 0px;
+}
+
+.checkbox-button:hover {
+  background-color: #fff;
+}
+
+.checkbox-button:focus {
+  box-shadow: 0px 0px 0px #fff;
+  background-color: #fff;
+}
+
+.spinnerMask {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 1);
+  z-index: 11;
+  width: 100%;
+  height: calc(100vh - 110px);
+  display: block;
+}
+
+.spinnerMaskWidth {
+  width: 91% !important;
+}
+
+.spinnerMaskWidth>.spinner {
+  margin-top: 10px;
+}
+
+.spinner {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 53%;
+  left: 35%;
+  width: 50px;
+  height: 50px;
+}
+
+span {
+  font-size: 15px;
+}

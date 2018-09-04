@@ -1,0 +1,9 @@
+<div [style.font-family]="customFontStyle">
+  <h1 mat-dialog-title>{{dialogName|translate}}</h1>
+  <div mat-dialog-content>{{userQuery|translate}}</div>
+  <div mat-dialog-actions>
+    <button mat-button (click)="dialogRef.close('1')">{{'YES'|translate}}</button>
+    <button mat-button (click)="dialogRef.close('0')">{{'NO'|translate}}</button>
+    <button mat-button (click)="dialogRef.close('2')">{{'CANCEL'|translate}}</button>
+  </div>
+</div>

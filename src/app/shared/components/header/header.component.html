@@ -1,0 +1,69 @@
+<mat-toolbar class="botm-mar-sm" [style.background-color]="customPanelBgColor" [style.color]="customPanelColor"
+  [style.font-family]="customPanelFontStyle">
+
+  <!-- Switch Button Between PW & MB -->
+  <button *ngIf="isLogin && utilsService.isAllLicense()" mat-button [matMenuTriggerFor]="appMenu">
+    <mat-icon>more_vert</mat-icon>
+  </button>
+  <mat-menu #appMenu="matMenu" [overlapTrigger]="false">
+    <a mat-menu-item *ngIf="currentApp == 'PublicationWizard'" (click)="navigateTo('MarketingBoard')">
+      <span [style.font-family]="customPanelFontStyle"> Marketing Board </span>
+    </a>
+    <a mat-menu-item *ngIf="currentApp == 'MarketingBoard'" (click)="navigateTo('PublicationWizard')">
+      <span [style.font-family]="customPanelFontStyle"> Publication Wizard </span>
+    </a>
+  </mat-menu>
+
+  <!-- Page Title -->
+  <span>{{ sharedDataService.title | translate }}</span>
+
+  <!-- logo For Login Page Only -->
+  <img *ngIf="!isLogin" src="assets/images/InBetween_logo.png" style="height: 20px;margin-left: 30px;" alt="InBetween">
+
+  <!-- App Spacer -->
+  <span class="app-spacer"></span>
+
+  <!-- Sync Button -->
+  <button id="sync" *ngIf="isLogin && currentApp == 'PublicationWizard'" mat-icon-button (click)="sync()" data-toggle="tooltip" title="{{'SYNC'|translate}}">
+    <mat-icon>autorenew</mat-icon>
+  </button>
+
+  <!-- langauge selection -->
+  <button mat-icon-button [matMenuTriggerFor]="languageMenu">
+    <mat-icon>language</mat-icon>
+  </button>
+  <mat-menu #languageMenu="matMenu" [overlapTrigger]="false">
+    <mat-radio-group [(ngModel)]="appLanguage" (ngModelChange)="utilsService.changeLang(appLanguage)">
+      <mat-radio-button class="ver-padd-xxs hor-padd-sm" *ngFor="let language of languages" [value]="language.value" [style.font-family]="customPanelFontStyle">
+        {{ language.key }}
+      </mat-radio-button>
+    </mat-radio-group>
+  </mat-menu>
+
+  <!-- Save Button -->
+  <button id="save" *ngIf="isLogin && sharedDataService.showTabs" mat-icon-button (click)="commonService.savePublication($event, false, this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex])" data-toggle="tooltip"
+    title="{{'SAVE'|translate}}">
+    <mat-icon class="app-icon">save</mat-icon>
+  </button>
+
+  <!-- User Dropdown -->
+  <button *ngIf="isLogin" mat-icon-button [matMenuTriggerFor]="userMenu">
+    <img style="width:21px; margin-left:2px;" src="assets/images/user.png" data-toggle="tooltip" title="{{'USER'|translate}} : {{sharedDataService.username}} &#013;{{'CLICK_HERE_TO_LOGOUT'|translate}}"
+      alt="User">
+  </button>
+  <mat-menu #userMenu="matMenu" [overlapTrigger]="false">
+    <div class="text-center setTextColor" [style.font-family]="customPanelFontStyle">{{ sharedDataService.username }}</div>
+    <a id="logout" mat-button class="pw-full-width" (click)="commonService.logoutPopUp($event)">
+      <span [style.font-family]="customPanelFontStyle"> {{ 'LOGOUT' | translate }} </span>
+    </a>
+  </mat-menu>
+
+  <!-- Called If user is Logged out from other tab -->
+  <div hidden *ngIf="!isLogin">{{commonService.logout()}}</div>
+
+  <!-- logo -->
+  <div *ngIf="sharedDataService._Customization.headerLogo && sharedDataService._Customization.headerLogo.visible == 'true'" mat-icon-button>
+    <img src="assets/images/favicon.ico" style="width:20px; margin-left:8px;" alt="Logo">
+  </div>
+
+</mat-toolbar>

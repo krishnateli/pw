@@ -1,0 +1,43 @@
+
+  <div class="pw-ver-padd-sm">
+      <form name="Form" [formGroup]=" createDuplicatePublicationForm" (ngSubmit)="createDuplicatePublication($event,createDuplicatePublicationForm.valid)"
+          (keyup.enter)="createDuplicatePublication($event,createDuplicatePublicationForm.valid)">
+          <div class="row">
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <mat-select id="dup_sel_proj" placeholder="{{'CHOOSE_PROJECT'|translate}}" (selectionChange)="projectChangedDuplicateProject(selectedDuplicateProject)"
+                          [(ngModel)]="selectedDuplicateProject" formControlName="project" required="true">
+                          <mat-option *ngFor="let k of projects_array" [value]="k" data-toggle="tooltip" title="{{k.name}}" [ngClass]="{'just': utilsService.checkTooltip(CHOOSEDUPPROJECT)}"
+                              #CHOOSEDUPPROJECT [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style">
+                              {{k.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <mat-select id="dup_sel_pub" placeholder="{{'CHOOSE_PUBLICATION'|translate}}" [(ngModel)]="selectedDuplicatePublication"
+                          formControlName="publication" required="true" (selectionChange)="setFocus(duplicate)">
+                          <mat-option *ngFor="let l of duplicatePublication_array" [value]="l" data-toggle="tooltip" title="{{l.name}}" [ngClass]="{'just': utilsService.checkTooltip(CHOOSEDUPPUBLICATION)}"
+                              #CHOOSEDUPPUBLICATION [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style" (click)="setFocus(duplicate)">
+                              {{l.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <input matInput id="dup_new_pub_name" style="color:black" placeholder="{{'NEW_PUBLICATION_NAME'|translate}}" formControlName="newpublication"
+                          [(ngModel)]="duplicatePublicationName" value="">
+                  </mat-form-field>
+              </div>
+          </div>
+          <div class="pull-right">
+              <button type="submit" id="create_dup_pub_button" mat-raised-button [ngStyle]="setbuttonstyleDuplicatePub()" #duplicate>{{'DUPLICATE_PUBLICATION'| translate}}</button>
+          </div>
+      </form>
+  </div>

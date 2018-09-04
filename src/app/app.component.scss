@@ -1,0 +1,76 @@
+.language_button {
+    border-radius: 3px;
+    line-height: 12px;
+}
+
+.langauge {
+    float: right;
+    margin: 10px 15px;
+    font-size: 14px;
+}
+
+.mat-button-toggle {
+    padding: 0 !important;
+}
+
+.pointer {
+    cursor: pointer;
+    margin-top: 11px;
+}
+
+mat-list-item {
+    cursor: pointer;
+}
+
+mat-list-item:hover {
+    background-color: #eee;
+}
+
+.app-icon {
+    padding: 0 7px;
+    width: 30px;
+    cursor: pointer;
+}
+
+.user-block ul {
+    list-style: none;
+    margin-left: -35px;
+}
+
+.menu {
+    margin-right: 20px;
+    margin-top: 5px;
+    cursor: pointer;
+    color: #fff!important;
+}
+
+.mat-menu-item {
+    color: #333!important;
+    text-decoration: none;
+}
+
+.example-container {
+    width: 100%;
+    min-height: 590px;
+    height: auto;
+}
+
+.sidenav-content {
+    display: block;
+    min-height: 600px;
+}
+
+.example-sidenav {
+    padding: 10px 15px;
+}
+
+
+/* .mask {
+    background-color: rgba(0, 0, 0, 0.2);
+    position: fixed;
+    
+    height: 100%;
+    z-index: 1;
+    
+    width: 100%;
+} */

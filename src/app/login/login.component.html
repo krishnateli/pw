@@ -1,0 +1,41 @@
+<app-header [isLogin]='utilsService.isLogged()' (setAppLanguage)="utilsService.changeLang($event)">
+</app-header>
+
+<app-spinner *ngIf="loginInprogress" backgroundColor="#F5F5F5"></app-spinner>
+
+<div class="loginContainer">
+  <mat-card class="col-sm-offset-4 col-sm-4 login-card">
+    <mat-card-title>
+      <mat-toolbar id="loginTab" [style.background-color]="customPanelBgColor" [style.color]="customPanelColor" [style.font-family]="customPanelFontStyle">
+        <span style="letter-spacing: 3px;">{{'LOGIN_TITLE'|translate}}</span>
+      </mat-toolbar>
+    </mat-card-title>
+    <mat-card-content>
+      <div class="card-content">
+        <form name="Form" [formGroup]="loginForm" (ngSubmit)="doLogin($event)">
+          <div class="row">
+            <div class="col-sm-6">
+              <mat-form-field class="pw-full-width">
+                <input style="width:161px;" matInput placeholder="{{'USERNAME'|translate}}" value="" required="" autocomplete="off" formControlName="username"
+                  id="user_name">
+              </mat-form-field>
+            </div>
+            <div class="col-sm-6">
+              <mat-form-field class="pw-full-width">
+                <input style="width:161px;" matInput placeholder="{{'PASSWORD'|translate}}" type="password" value="" required="" formControlName="password"
+                  id="password">
+              </mat-form-field>
+            </div>
+          </div>
+          <div class="row">
+            <span style="color:#F00;margin-bottom: 15px;">{{error|translate}}</span>
+          </div>
+          <div class="pull-right">
+            <button type="submit" id="login_button" routerLinkActive="active" mat-raised-button [ngStyle]="setbuttonstyle()" [disabled]="!loginForm.valid">{{'LOGIN_TITLE'|translate}}</button>
+          </div>
+          <br>
+        </form>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

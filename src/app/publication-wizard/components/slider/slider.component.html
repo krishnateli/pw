@@ -1,0 +1,32 @@
+<div class="mPC" style="position: relative;" [ngStyle]="{'text-align':showSlider ? 'center' : 'left'}">
+  <button *ngIf="showSlider" [disabled]="isPrevious" class="sliderButton left" (click)="previousItem()" mat-icon-button>
+    <mat-icon>keyboard_arrow_left</mat-icon>
+  </button>
+  <button *ngIf="showSlider" [disabled]="isNext" class="sliderButton right" (click)="nextItem()" mat-icon-button>
+    <mat-icon>keyboard_arrow_right</mat-icon>
+  </button>
+  <div dnd-draggable [dragEnabled]="true" [dragData]="{dropType:'page', data: mPage}" *ngFor="let mPage of masterPagesData; let i = index" class="mContainer" [ngClass]="{'hidden': i<this.currentElement}">
+    <label class="small-text" [ngClass]="{'staticPageLabelWidth': dataType == 'StaticPages'}" data-toggle="tooltip" title="{{ mPage.id }}">{{ mPage.id }}</label>
+    <span *ngIf="dataType == 'StaticPages'" class="close small-button-hover" (click)="deleteStaticMasterPage(mPage.id)" >x</span>
+    <div class="mPageContainer">
+      <div *ngIf="(mPage.type == 'IBLoader') || checkPreviewLoaderState(mPage)">
+        <span class="spinner-gif2">
+          <img src="assets/images/loader-new.gif"  alt="Loading..." />
+        </span>
+      </div>
+      <div *ngFor="let pArea of mPage.areas">
+        <svg style="position: absolute;z-index: 20;left: 0;" *ngIf="pArea._temp._width > 74">
+          <line x1="72" [attr.y1]="pArea._temp._y" x2="72" [attr.y2]="pArea._temp._height" stroke-dasharray="5,5" d="M5 20 l215 0" stroke="blue" style="stroke-width:2" />
+        </svg>
+        <div *ngIf="pArea._temp" style="position:absolute; border: 1px solid grey;" [ngStyle]="{'margin-left': pArea._temp._x +'px', 'margin-top': pArea._temp._y +'px', 'width': pArea._temp._width +'px', 'height': pArea._temp._height +'px', 'background-color': pArea._temp.color }">
+        </div>
+
+      </div> 
+      <div *ngIf="mPage._staticPreview && mPage._staticPreview[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage]">
+        <img class="img-responsive" [src]="'data:image/PNG;base64,'+mPage._staticPreview[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage][0] | safeHTML" alt="Static Page Preview" (load)="onStaticPageLoad(mPage)">
+      </div>
+    </div>
+    <label class="small-text" *ngIf="mPage._staticPreview && mPage._staticPreview[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage]">{{mPage._staticPreview[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage].length}}</label>
+    <label class="small-text" *ngIf="!mPage._staticPreview || !mPage._staticPreview[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage]">&nbsp;</label>
+  </div>
+</div>

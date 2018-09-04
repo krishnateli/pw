@@ -1,0 +1,361 @@
+<div class="builderElementList col-sm-12 resizableContainer">
+  <vertical-split-pane primary-component-minsize="450" secondary-component-minsize="360" primary-component-initialratio="0.7"
+    (on-ended-resizing)="onVerResize()" (on-begin-resizing)="onVerResize()">
+    <div class="split-pane-content-primary">
+      <div style="position: relative; width: calc(100% - 40px); float: left;">
+        <mat-card class="builder-elementlist-card" style="height: calc(100vh - 295px);">
+          <mat-card-title>
+            <mat-toolbar id="builderTab5" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style" style="overflow-x: auto;" [ngClass]="{'fatScrollBarHeight': updateHeightInFatScrollBrowsers(pagePlanningToolBar)}"
+              [style.padding-bottom.px]="updateHeightInFatScrollBrowsers(pagePlanningToolBar)? setPadd :0" #pagePlanningToolBar>
+              <span>{{'PAGE_PLANNING'|translate}}</span>
+              <span class="ib-hor-mar-xl">
+                <mat-form-field style="width: 100px;">
+                  <mat-select floatPlaceholder="never" placeholder="{{'ZOOM'|translate}}" [(ngModel)]="selectedZoom" (ngModelChange)="updateElementZoom(selectedZoom)"
+                    name="zm">
+                    <mat-option *ngFor="let zm of constantsService.zoom" [value]="zm.zm" [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                      [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{ zm.per }}%
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </span>
+              <span class="ib-hor-mar-xl">
+                <mat-form-field style="width: 100px;">
+                  <mat-select placeholder="{{'LANGUAGE'|translate}}" floatPlaceholder="never" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage"
+                    class="settings-full-width" (ngModelChange)="updateStaticPagePreview()">
+                    <mat-option *ngFor="let language of ibUtilsService.getSortedLanguageList(sharedDataService.publicationList[sharedDataService.activePublicationIndex])"
+                      value="{{language}}" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                      [style.font-family]="sharedDataService._Customization.font.style">
+                      {{language}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </span>
+              <span class="element-spacer"></span>
+              <span class="ib-hor-mar-xl">
+                <mat-form-field style="width: 130px;">
+                  <mat-select placeholder="{{'PAGE FILTER'|translate}}" floatPlaceholder="never" (selectionChange)="filterPubItem()" [(ngModel)]="selectedPageFilter"
+                    name="pf">
+                    <mat-option *ngFor="let pf of constantsService.pageFilter" [value]="pf.value" [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                      [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+                      {{pf.viewValue}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+              </span>
+              <span *ngIf="checkMPreview()" style="padding-right: 20px;">
+                <button [disabled]="!checkPrevew()" class="ib-no-min-width" mat-icon-button (click)="previewMpage()">
+                  <mat-icon style="padding:0 !important" *ngIf="!this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._mPreviewAll">grid_on</mat-icon>
+                  <mat-icon style="padding:0 !important" *ngIf="this.sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._mPreviewAll">grid_off</mat-icon>
+                </button>
+              </span>
+              <span>
+                <button class="ib-no-min-width" mat-icon-button (click)="previewPage()">
+                  <mat-icon *ngIf="checkPagePreviewState()">visibility</mat-icon>
+                  <mat-icon *ngIf="!checkPagePreviewState()">visibility_off</mat-icon>
+                </button>
+              </span>
+              <span>
+                <button class="ib-no-min-width" mat-icon-button (click)="checkAndConvert()">
+                  <mat-icon data-toggle="tooltip" title="{{'CONVERT_TO_INDESIGN'|translate}}">screen_rotation</mat-icon>
+                </button>
+              </span>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <div class="scrollTopPanel" [ngStyle]="{'top': updateHeightInFatScrollBrowsers(pagePlanningToolBar)? '45px':'38px' }" [ngClass]="{'scrollArea':topScroll}"
+              (dragenter)="scrollTopStart()" (dragleave)="scrollTopStop()">
+              <div *ngIf="topScroll">
+                <mat-icon>keyboard_arrow_up</mat-icon>
+              </div>
+            </div>
+            <div class="scrollBottomPanel" [ngClass]="{'scrollArea':bottomScroll}" (dragenter)="scrollBottomStart()" (dragleave)="scrollBottomStop()">
+              <div *ngIf="bottomScroll">
+                <mat-icon>keyboard_arrow_down</mat-icon>
+              </div>
+            </div>
+            <div dnd-droppable (onDropSuccess)="showDroppedData($event)" id="playAreaContainer" class="playAreaContainer card-content"
+              style="position:relative;">
+              <div id="playArea" class="playArea" style="position:relative;">
+                <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._reloadBasketLoader">
+                  <img src="assets/images/loader-new.gif" alt="Loading..." />
+                </span>
+                <div *ngIf="sharedDataService.publicationList [sharedDataService.activePublicationIndex]._pubItems.length>0" style="position:relative; transform-origin: 0 0; -moz-transform-origin: 0 0;"
+                  [style.-moz-transform]="'scale('+selectedZoom+')'">
+                  <div [style.zoom]="selectedZoom" [style.-ms-zoom]="selectedZoom" [style.-webkit-zoom]="selectedZoom" style="position:relative;"
+                    id="dumm" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage && !sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.startOnLeftPage"
+                    class="dPageLeft" style="cursor: pointer; margin-right: -8px;">
+                    <label class="small-text">&nbsp;</label>
+                    <div class="pPageContainer dummyPage">
+                    </div>
+                    <div class="text-left">&nbsp;</div>
+                  </div>
+                  <div [style.zoom]="selectedZoom" [style.-ms-zoom]="selectedZoom" [style.-webkit-zoom]="selectedZoom" style="position:relative;"
+                    [className]="checkPageStart(indx)" *ngFor="let pItem of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems; let indx = index; let isOdd = odd; let isEven = even;"
+                    id="{{ pItem.id }}_{{ indx }}">
+                    <div dnd-droppable (onDropSuccess)="showDroppedData($event)">
+                      <mat-form-field *ngIf="checkEditTitle(indx)" class="renameText">
+                        <input style="padding: 2px 0px;" (keyup.enter)="onBlur(indx)" (blur)="onBlur(indx)" id="title{{indx}}" matInput placeholder=""
+                          value="{{pItem.pageDetails.pageId}}">
+                      </mat-form-field>
+                      <label *ngIf="!checkEditTitle(indx)  && !utilsService.isPresent(pItem.pageName)" data-toggle="tooltip" title="{{ pItem.id }}: {{pItem.pageDetails.pageId}}"
+                        (click)="switchEditTitle(indx)">{{ pItem.pageDetails.pageId }} </label>
+                      <label *ngIf="!checkEditTitle(indx) && utilsService.isPresent(pItem.pageName)" data-toggle="tooltip" title="{{ pItem.id }}: {{pItem.pageName}}"
+                        (click)="switchEditTitle(indx)">{{ pItem.pageName }} </label>
+                      <span class="close small-button-hover" (click)="removePubItem(pItem.id,indx)">x</span>
+                      <br>
+                      <div style="position:relative;" dnd-draggable [dragEnabled]="pageDragged" [dragData]="{dropType:'reorder', data: pItem.id}"
+                        class="pPageContainer" (click)="showPageProperties(indx, $event)" [ngClass]="{'activePage': checkSelectedPage(pItem.id)}">
+                        <div style="position:relative; height:100%;" id="{{pItem.id}}" dnd-droppable (onDropSuccess)="showDroppedData($event)">
+                          <div *ngIf="pItem._type">
+                            <img class="page-logo" *ngIf="pItem.type == 'InDesign'" src="assets/images/indesign_12.svg" alt="InDesign">
+                            <img class="page-logo" *ngIf="pItem.type == 'PDF'" src="assets/images/pdf_12.svg" alt="PDF">
+                            <img *ngIf="!pItem._emptyPage" class="img-responsive" src="data:image/PNG;base64,{{pItem.imgdata}}" alt="No Products To Preview">
+                            <div *ngIf="pItem._emptyPage" class="emptyPage">
+                              {{'ERROR_NO_PRODUCTS_TO_PREVIEW'|translate}}
+                            </div>
+                          </div>
+                          <div style="text-align:center;" *ngIf="(!pItem._type && pItem._preview) || (pItem._type =='preview' && pItem._previewLangChange)">
+                            <span class="spinner-gif2">
+                              <img src="assets/images/loader-new.gif" alt="Loading..." />
+                              <h5 *ngIf="pItem.type == 'CONVERTING'">{{'CONVERTING_TO_INDESIGN'|translate}}</h5>
+                            </span>
+                          </div>
+                          <div *ngIf="pItem._mPreview">
+                            <img class="img-responsive" src="data:image/PNG;base64,{{pItem._mPreviewUri}}" alt="Preview Image">
+                          </div>
+                          <div *ngIf="!pItem._mPreview && !pItem._type && !pItem._preview && pItem.type=='InBetween'">
+                            <div *ngFor="let pArea of pItem.pagePlanItemAreaDetailsList; let i= index">
+                              <div *ngIf="pArea._temp" (click)="showAreaStack(indx, i, pArea, $event)" style="overflow-x: hidden;" [ngClass]="{'activeArea': checkSelectedArea(pItem.id, pArea.id), 'overflow-hidden':pArea.type=='DynamicArea'}"
+                                id="{{pItem.id}}_{{indx}}_{{pArea.id}}" class="areas" [ngStyle]="{'margin-left': pArea._temp.x +'px', 'margin-top': pArea._temp.y +'px', 'width': pArea._temp.width +'px', 'height': pArea._temp.height +'px', 'background-color': pArea._temp.color }">
+                                <svg [ngStyle]="{'left': 146 - pArea._temp.x +'px'}" style="position: absolute;z-index: 20;height:inherit;" *ngIf="pArea._temp.width > 150">
+                                  <line [attr.x1]="0" y1="0" [attr.x2]="0" [attr.y2]="pArea._temp.height" stroke-dasharray="5,5" d="M5 20 l215 0" stroke="blue"
+                                    style="stroke-width:2" />
+                                </svg>
+                                <div *ngIf="pArea.areaAssignment.assignedElements != null" (onDropSuccess)="showDroppedData($event)">
+                                  <div class="elementsDropped" *ngFor="let aAsgEle of pArea.areaAssignment.assignedElements; let in=index" dnd-draggable [dragEnabled]="true"
+                                    [dragData]="{dropType:'areaChange', data: aAsgEle, stackId: pArea.areaAssignment.stackId, pIndx: indx, aIndx: i, eIndx: in}"
+                                    (onDragStart)="ondragStart($event)" (onDropSuccess)="showDroppedData($event)" [ngClass]="{'activeElem': checkSelectedElem(pItem.id, pArea.id, in, currParentElem, currElem)}"
+                                    (click)="showElemProperties(pItem.id, indx, pArea.id, i, aAsgEle.assigmentIndex, in, $event)"
+                                    data-toggle="tooltip" title="{{aAsgEle.displayValue}}" #currParentElem>
+                                    <div #currElem (onDropSuccess)="showDroppedData($event)">{{ aAsgEle.displayValue }}</div>
+                                    <span *ngIf="currElem.offsetWidth>20" class="close" style="right: 0.5px; height: 14px;" (click)="removeElements(pItem.id, indx, i, in)">x</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage">
+                        <span *ngIf="pItem._show" class="plusSymbol" [class.pull-right]="isOdd" [class.pull-left]="isEven">
+                          <button mat-icon-button (click)="addOverFlowPAges(indx)" *ngIf="!pItem.toggleOverFlowPage" class="plusSymbol"> + </button>
+                          <button mat-icon-button (click)="ibUtilsService.removeOverFlowPages(sharedDataService.publicationList[sharedDataService.activePublicationIndex], indx)"
+                            *ngIf="pItem.toggleOverFlowPage" class="minusSymbol">
+                            - </button>
+                        </span>
+                        <span *ngIf="pItem.type == 'InBetween' || pItem._show || (!pItem._show && pItem._length == 1)" [matMenuTriggerFor]="menu"
+                          [style.background]="checkPageStatus(pItem.id)" class="workFlowBar"></span>
+                        <span [class.pull-left]="isOdd" [class.pull-right]="isEven">{{indx +1}}</span>&nbsp;
+                      </div>
+                      <div *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.doublePage"
+                        class="text-left">
+                        <span *ngIf="pItem._show" class="plusSymbol pull-left">
+                          <button mat-icon-button (click)="addOverFlowPAges(indx)" *ngIf="!pItem.toggleOverFlowPage" class="plusSymbol"> + </button>
+                          <button mat-icon-button (click)="ibUtilsService.removeOverFlowPages(sharedDataService.publicationList[sharedDataService.activePublicationIndex], indx)"
+                            *ngIf="pItem.toggleOverFlowPage" class="minusSymbol">
+                            - </button>
+                        </span>
+                        <span *ngIf="pItem.type == 'InBetween' || pItem._show || (!pItem._show && pItem._length == 1)" [matMenuTriggerFor]="menu"
+                          [style.background]="checkPageStatus(pItem.id)" class="workFlowBar"></span>
+                        <span class="pull-right">{{indx +1}}</span>&nbsp;
+                      </div>
+                      <mat-menu #menu="matMenu">
+                        <button (click)="updatePageState(pItem.id, state.name)" *ngFor="let state of workFlowStates" mat-menu-item [style.font-family]="sharedDataService._Customization.font.style">
+                          <mat-icon [style.color]="validateColor(state.hexColor)">label</mat-icon>
+                          {{ state.name }}
+                        </button>
+                      </mat-menu>
+                    </div>
+                  </div>
+                  <div [style.zoom]="selectedZoom" [style.-ms-zoom]="selectedZoom" [style.-webkit-zoom]="selectedZoom" *ngIf="showDummyPage"
+                    class="dPageRight" style="margin-left: 0px; cursor: pointer;">
+                    <label class="small-text">&nbsp;</label>
+                    <div class="pPageContainer dummyPage">
+                    </div>
+                    <div class="text-left">&nbsp;</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+        <mat-card>
+          <mat-card-title>
+            <mat-toolbar id="builderTab6" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._toggleStaticMasterPages">{{'MASTER_PAGES'|translate}}</span>
+              <span *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._toggleStaticMasterPages">{{'STATIC_PAGES'|translate}}</span>
+              <span style="margin-left: 25px;margin-right: 25px;">{{'QUANTITY'|translate}}
+                <button class="ib-no-min-width" [disabled]="qty_val <= 1" (click)="decrement()" mat-button>
+                  <mat-icon class="builder-icon" style="font-size: 20px;">remove</mat-icon>
+                </button>
+                <input class="qtyInput" matInput [(ngModel)]="qty_val" min="0" max="9" (ngModelChange)="qtyUpdated($event)" (blur)="quantityValidate()"
+                  type="number">
+                <button class="ib-no-min-width" (click)="increment()" mat-button>
+                  <mat-icon class="builder-icon" style="font-size: 20px;">add</mat-icon>
+                </button>
+              </span>
+              <span class="element-spacer"></span>
+              <ng-template [ngIf]="ibUtilsService.isStaticPageLicensed()">
+                <span>
+                  <button class="ib-font-size-xl" mat-icon-button (click)="pagesViewToggle()">
+                    <mat-icon>swap_horiz</mat-icon>
+                  </button>
+                </span>
+              </ng-template>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content>
+            <div onselectstart='return false;' unselectable='on' class="unselectable">
+              <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._toggleStaticMasterPages" class="card-content row"
+                style="padding: 10px 20px;">
+                <div class="col-sm-12">
+                  <app-slider dataType="MasterPages" [masterPagesData]="ibUtilsService.getMasterPagesDBHTML(sharedDataService.publicationList[sharedDataService.activePublicationIndex])"></app-slider>
+                </div>
+              </div>
+              <div *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._toggleStaticMasterPages" style="overflow: auto;">
+                <div class="card-content" style="padding: 0;">
+                  <div class="col-sm-10" style="padding: 10px 20px;">
+                    <app-slider dataType="StaticPages" (deleteStaticPage)="deleteStaticMasterPage($event)" [masterPagesData]="ibUtilsService.getStaticPagesDBHTML(sharedDataService.publicationList[sharedDataService.activePublicationIndex])"></app-slider>
+                  </div>
+                  <ng-template [ngIf]="ibUtilsService.isStaticPageLicensed()">
+                    <div class="col-sm-2 text-center">
+                      <input style="display:none" type="file" class="form-control" name="documents" (change)="importStatticFile($event)" id="importStaticPages"
+                        accept=".pdf, .indd">
+                      <div dnd-draggable [dragEnabled]="true" [dragData]="{dropType:'importStaticPages'}" class="staticPageImport" (click)="onClickImportStaticPages()">
+                        import static pages
+                      </div>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+      <div style="position: relative; width: 40px; display: inline-block;">
+        <div class="select_all_button">
+          <button (click)="selectAllPages()" data-toggle="tooltip" title="{{'SELECT_ALL_PAGES'|translate}}" class="select_all" [ngStyle]="checkPublicationPagesLength()">
+            <mat-icon style="margin-top: 8px; margin-bottom: 8px; ">select_all</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-pane-content-secondary">
+      <div style="position: relative; width: 40px; float: left;">
+        <div class="select_all_button">
+          <button (click)="selectAllElementsFromBasketStack()" style="right:0;" class="select_all" data-toggle="tooltip" title="{{'SELECT_ALL_FROM_BASKET_STACK'|translate}}" [ngStyle]="checkBasketLength()">
+            <mat-icon style="margin-top: 8px; margin-bottom: 8px; ">select_all</mat-icon>
+          </button>
+        </div>
+      </div>
+      <div style="position: relative; width: calc(100% - 40px); display: inline-block;">
+        <mat-card id="basket_table" class="builder-elementlist-card divWidth" style="height: calc(100vh - 295px);">
+          <mat-card-title>
+            <mat-toolbar id="builderTab1" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+              [style.font-family]="sharedDataService._Customization.font.style">
+              <span *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle">Basket</span>
+              <mat-form-field style="width: 150px;" *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle">
+                <mat-select placeholder="" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack"
+                  name="" (selectionChange)="stackChanged(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack)">
+                  <mat-option *ngFor="let eachStack of ibUtilsService.getStacklistFromProjectDTOHTML(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._respondata.publication.project)"
+                    [value]="eachStack" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                    [style.font-family]="sharedDataService._Customization.font.style">
+                    {{eachStack.name}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <mat-form-field class="stack-element-filter" *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle && utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters.length>0">
+                <mat-select floatPlaceholder="never" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStackFilter"
+                  name="" class="showGearIconOnly glyphicon glyphicon-filter ib-no-min-width" (selectionChange)="stackFilterChanged(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedStack)"
+                  data-toggle="tooltip" title="Stack Filter">
+                  <mat-option *ngFor="let eachStackFilter of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._allSelectedStackFilters"
+                    [value]="eachStackFilter" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                    [style.font-family]="sharedDataService._Customization.font.style">
+                    {{eachStackFilter.label}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <span class="element-spacer"></span>
+              <mat-icon (click)="bucketViewToggle()" style="font-size: 18px;cursor: pointer;margin-top: 5px;">swap_horiz</mat-icon>
+              <mat-icon *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject.length>0"
+                (click)="toggleFilter()" style="font-size: 18px;cursor: pointer;margin-top: 5px;" data-toggle="tooltip" title="Filter">filter_list</mat-icon>
+              <mat-icon *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._filterListObject.length>0"
+                (click)="toggleBasketFilter()" style="font-size: 18px;cursor: pointer;margin-top: 5px;" data-toggle="tooltip"
+                title="Filter">filter_list</mat-icon>
+              <mat-icon *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" (click)="toggleSearchBasket()"
+                style="font-size: 18px;cursor: pointer;margin-top: 5px;">search</mat-icon>
+              <input style="max-width: 90px;" *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle"
+                type="search" [ngStyle]="{width:isOpenBasket ? '150px' : '0px'}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryBuilderBasket"
+                placeholder="search" placeholder="search" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor"
+                [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+              <mat-icon *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" (click)="clearSearchBasket()"
+                [ngStyle]="{display:isOpenBasket ? 'block' : 'none'}" style="font-size: 18px;cursor: pointer;">clear</mat-icon>
+              <mat-icon *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" (click)="toggleSearchStack()"
+                style="font-size: 18px;cursor: pointer;margin-top: 5px;">search</mat-icon>
+              <input style="max-width: 90px;" *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle"
+                type="search" [ngStyle]="{width:isOpenStack ? '150px' : '0px'}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryStack"
+                placeholder="search" placeholder="search" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor"
+                [style.color]="sharedDataService._Customization.headerPanel.color" [style.font-family]="sharedDataService._Customization.font.style">
+              <mat-icon *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" (click)="clearSearchStack()"
+                [ngStyle]="{display:isOpenStack ? 'block' : 'none'}" style="font-size: 18px;cursor: pointer;">clear</mat-icon>
+            </mat-toolbar>
+          </mat-card-title>
+          <mat-card-content #tableContainer style="height: calc(100vh - 330px);">
+            <div (click)="toggleFilter()" class="filter-mask" [ngStyle]="{display:isOpenFilter ? 'block' : 'none'}">
+            </div>
+            <div *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" class="filterBox"
+              [ngStyle]="{display:isOpenFilter ? 'block' : 'none'}">
+              <app-filter switchFilterArray="stack" [builderStackSelectedFilters]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stackSelectedFilters"
+                [mainTable1]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stacklist_table"
+                (addFilterEvent)="selectedFilterfromChild($event)" (addFilterText)="selectedTextFilterfromChild($event)" (addFilterCheckbox)="selectedCheckboxFilterfromChild($event)"></app-filter>
+            </div>
+            <div (click)="toggleBasketFilter()" class="filter-mask" [ngStyle]="{display:isOpenBasketFilter ? 'block' : 'none'}">
+            </div>
+            <div *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" class="filterBox"
+              [ngStyle]="{display:isOpenBasketFilter ? 'block' : 'none'}">
+              <app-filter switchFilterArray="basket" [builderBasketSelectedFilters]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._basketSelectedFilters"
+                [mainTable1]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementlist_table"
+                (addFilterEvent)="selectedFilterfromChild($event)" (addFilterText)="selectedTextFilterfromChild($event)" (addFilterCheckbox)="selectedCheckboxFilterfromChild($event)"
+                statusFromBasket="true"></app-filter>
+            </div>
+            <div *ngIf="sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" id="BasketTable">
+              <span class="spinner-gif2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._reloadBasketLoader">
+                <img src="assets/images/loader-new.gif" alt="Loading..." />
+              </span>
+              <app-table tableWidth="small" page="builderBasket" tableType="Basket" tableHeight="277" draggableColumn="true" [selectedRows]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderBucketRows"
+                [mainTable]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elementlist_table | search : sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryBuilderBasket | checkboxfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._basketSelectedFilters : addFilter : addTextFilter : change"
+                [containerWidth]="tableContainer.offsetWidth"></app-table>
+            </div>
+            <div *ngIf="!sharedDataService.publicationList[this.sharedDataService.activePublicationIndex]._bucketToggle" id="StackTable">
+              <span class="spinner-gif-tranparent-background" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].dataStatus">
+                <img src="assets/images/loader-new.gif" alt="Loading..." />
+              </span>
+              <app-table *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex].dataStatus" tableWidth="small"
+                page="builderStack" tableType="Stack" tableHeight="277" draggableColumn="true" [selectedRows]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderStackRows"
+                [mainTable]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stacklist_table| langStackFilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderLanguage: sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedStack?.logLanguageConfigured | search : sharedDataService.publicationList[sharedDataService.activePublicationIndex].searchQueryStack | checkboxfilter : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._stackSelectedFilters : addFilter : addTextFilter : change"
+                [containerWidth]="tableContainer.offsetWidth"></app-table>
+            </div>
+
+          </mat-card-content>
+        </mat-card>
+        <mat-card class="properties" style="min-height:240px">
+          <app-preview-box (getElementImageEvent)="callGetElementImage($event)" [data]="alternativeTemplateResult"></app-preview-box>
+        </mat-card>
+      </div>
+    </div>
+  </vertical-split-pane>
+</div>

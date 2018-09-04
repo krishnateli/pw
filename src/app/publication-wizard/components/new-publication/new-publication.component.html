@@ -1,0 +1,61 @@
+
+  <div class="pw-ver-padd-sm">
+      <form name="Form" [formGroup]="newPublicationForm" (ngSubmit)="createPublication($event,newPublicationForm.valid)" (keyup.enter)="createPublication($event,newPublicationForm.valid)">
+          <div class="row">
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <mat-select id="new_sel_proj" placeholder="{{'CHOOSE_PROJECT'|translate}}" (selectionChange)="projectChangedNewPublication.emit(selectedProjectNewPublication)"
+                          [(ngModel)]="selectedProjectNewPublication" formControlName="project" class="pw-full-width"
+                          required>
+                          <mat-option id="proj_list" *ngFor="let project of projects_array" [value]="project" data-toggle="tooltip" title="{{project.name}}"
+                              [ngClass]="{'just': utilsService.checkTooltip(CHOOSENEWPROJECT)}" #CHOOSENEWPROJECT
+                              [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style">
+                              {{project.name}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <mat-select id="new_sel_master_pub" placeholder="{{'CHOOSE_MASTER_PUBLICATION'|translate}}" [(ngModel)]="selectedMasterPublication"
+                          formControlName="masterpublication" class="pw-full-width" required>
+                          <mat-option *ngFor="let masterpublication of masterpublication_array" [value]="masterpublication.masterPublicationId" data-toggle="tooltip"
+                              title="{{masterpublication.masterPublicationId}}: {{masterpublication.masterPublicationName}}"
+                              #CHOOSEMASTERPUBLICATION [style.color]="sharedDataService._Customization.dropDownSelection.color"
+                              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+                              [style.font-family]="sharedDataService._Customization.font.style">
+                              {{masterpublication.masterPublicationName}}
+                          </mat-option>
+                      </mat-select>
+                  </mat-form-field>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-sm-6">
+                  <mat-form-field class="pw-full-width">
+                      <input matInput style="color:black" id="new_pub_name" placeholder="{{'PUBLICATION_NAME'|translate}}" value="" required=""
+                          formControlName="publication" required>
+                  </mat-form-field>
+                  <mat-form-field class="pw-full-width">
+                      <!-- <textarea matInput placeholder="Description Here" ></textarea> -->
+                      <input matInput style="color:black" id="desc" placeholder="{{'DSCRIPTION'|translate}}" formControlName="description">
+                  </mat-form-field>
+              </div>
+              <div class="col-sm-6">
+                  <div class="loglang-block">
+                      <div *ngFor="let loglang of last">
+                          <input type="checkbox" class="log-lang-check" />
+                          <img id="{{languageList[loglang]}}" data-toggle="tooltip" title="{{loglang}}" class="log-lang-img img-responsive" src="data:image/PNG;base64,{{languageList[loglang]}}"
+                              alt="" (click)="selected_log_lang(loglang)" (click)="setFocus(country)" [ngStyle]="checkIfSelected(loglang)">
+                      </div>
+                  </div>
+              </div>
+          </div>
+          <div class="right">
+              <button id="create_new_pub_button" type="submit" routerLinkActive="active" mat-raised-button [ngStyle]="setbuttonstyleCreatenewPub()"
+                  #country>{{'CREATE_NEW_PUBLICATION'|translate}} </button>
+          </div>
+      </form>
+  </div>

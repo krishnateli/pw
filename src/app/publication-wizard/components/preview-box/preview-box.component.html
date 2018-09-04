@@ -1,0 +1,337 @@
+<mat-card-title>
+  <mat-toolbar id="builderTab2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'stackbasket'"
+    [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+    [style.font-family]="sharedDataService._Customization.font.style">
+    <mat-form-field>
+      <mat-select placeholder="{{'Quick_Preview'|translate}}" [(ngModel)]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._builderSelectedTemplate"
+        (ngModelChange)="loadTemplate(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._builderSelectedTemplate)">
+        <mat-option data-toggle="tooltip" title="{{i}}" [ngClass]="{'just': utilsService.checkTooltip(template)}" #template *ngFor="let i of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._templateList"
+          value="{{i}}" [style.color]="sharedDataService._Customization.dropDownSelection.color" [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor"
+          [style.font-family]="sharedDataService._Customization.font.style">
+          {{i| translate}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <span *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedPages.length!=0" style="padding:10px;">
+      <button class="ib-font-size-xl" mat-button (click)="togglePageProp2QuickPrev()">
+        <em class="fa fa-exchange" aria-hidden="true"></em>
+      </button>
+    </span>
+  </mat-toolbar>
+  <mat-toolbar *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'page'"
+    id="builderTab3" [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+    [style.font-family]="sharedDataService._Customization.font.style">
+    <span>Page Properties </span>
+    <span class="element-spacer"></span>
+    <span style="padding:10px;" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderBucketRows.length!=0 || sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedBuilderStackRows.length!=0">
+      <button class="ib-font-size-xl" mat-button (click)="togglePageProp2QuickPrev()">
+        <em class="fa fa-exchange" aria-hidden="true"></em>
+      </button>
+    </span>
+    <span class="pull-right" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage != 0">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage
+      + 1}}/{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems.length}}</span>
+    <span class="pull-right" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage === 0">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage
+      + 1}}/{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems.length}}</span>
+  </mat-toolbar>
+
+  <mat-toolbar id="builderTab4" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'element'"
+    [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+    [style.font-family]="sharedDataService._Customization.font.style">
+    <span>Element Properties </span>
+    <span class="element-spacer"></span>
+    <span style="padding:15px;">
+      <button class="ib-font-size-xl" mat-button (click)="toggleBetwn = !toggleBetwn">
+        <em class="fa fa-exchange" aria-hidden="true"></em>
+      </button>
+    </span>
+    <span class="pull-right" *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex !== NaN">
+      {{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.dataElementIndex+1 }}/{{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.elemLen
+      }}
+    </span>
+  </mat-toolbar>
+
+  <mat-toolbar id="builderTab2" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'area'"
+    [style.background-color]="sharedDataService._Customization.headerPanel.bgColor" [style.color]="sharedDataService._Customization.headerPanel.color"
+    [style.font-family]="sharedDataService._Customization.font.style">
+    {{'ALTERNATE_TEMPLATE'|translate}}
+  </mat-toolbar>
+
+</mat-card-title>
+
+<mat-card-content *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus || sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewBuilderStatus">
+  <div class="loaderContainer">
+    <img src="assets/images/loader-new.gif" alt="" />
+  </div>
+</mat-card-content>
+
+<mat-card-content id="preview_properties" *ngIf="(!sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus && !sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewBuilderStatus) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'stackbasket'">
+  <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._isBuilderQuickPreview">
+    <div *ngSwitchCase="true">
+      <div *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex].multipleFlag;else otherContent">
+        <div class="row">
+          <div class="card-sub-content1 pull-left">
+            <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length ==0">
+              <img *ngSwitchCase="true" class="img-responsive" style="margin: 0 auto" [src]="'assets/images/'+sharedDataService.publicationList[sharedDataService.activePublicationIndex]._defaultImageName"
+                alt="">
+              <div *ngSwitchDefault>
+                <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage == ''">
+                  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length>1" class="imageCount">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length}}</div>
+                  <span [ngClass]="{'cursor': sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length > 1}"
+                    class="">
+                    <img (click)="showMultipleImages()" class="img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray[0].bytes}}"
+                      alt="">
+                  </span>
+                </div>
+                <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage != ''">
+                  <div *ngFor="let image of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray;let imageIndex=index">
+                    <div *ngIf="image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length>1"
+                      class="imageCount">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length}}</div>
+                    <span [ngClass]="{'cursor': sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length > 1}">
+                      <img *ngIf="image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage" (click)="showMultipleImages()"
+                        class="pull-left img-responsive" src="data:image/PNG;base64,{{image.bytes}}" alt="">
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card-sub-content2">
+            <div class="floating-text">
+              <strong>{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedDisplayValue}}</strong>
+            </div>
+            <div *ngFor="let colValues of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow | displaydata">
+              <ng-container *ngIf="colValues!='filters'">
+                <div *ngIf="colValues == 'additionalInfos'">
+                  <div *ngFor="let aInf of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow?.additionalInfos">
+                    <div *ngIf="aInf.name==constantsService.RIC_TRANSLATION_STATUS">
+                      <div class="loglang-block">
+                        <div *ngFor="let loglang of aInf.nodeValues">
+                          <img id="{{loglang}}" data-toggle="tooltip" title="{{loglang}}" class="log-lang-img img-responsive" src="data:image/PNG;base64,{{ibUtilsService.findValueOfProperty(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._logLanguageFlagList,loglang)}}"
+                            alt="">
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="colValues=='filters'">
+                <div *ngFor="let filterCol of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow[colValues] | previewFilter">
+                  <p>{{filterCol}}:
+                    <label style="float: center">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow[colValues][filterCol]['values']?sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow[colValues][filterCol]['values'][0]:""}}</label>
+                  </p>
+                </div>
+              </ng-container>
+            </div>
+            <div class="productState" *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow) &&  utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow.productStateDisplayValue) && utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow.productStateColorCode)">
+              <mat-icon style="vertical-align: -7px; height: 52px; float: left; margin-right: 5px;" [style.color]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow.productStateColorCode">fiber_manual_record</mat-icon>
+              <label style="float: center">{{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow.productStateDisplayValue
+                }}
+              </label>
+            </div>
+            <img style="width:35px;" *ngFor="let x of selectedlangurl" [src]="'assets/images/'+x" alt="">
+          </div>
+        </div>
+      </div>
+      <ng-template #otherContent>
+        <div class="multipleImages">
+          <table>
+            <tr>
+              <td *ngFor="let image of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray;let imageIndex=index">
+                <div class="SingleImage" [ngClass]="{'activeImage': image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage}"
+                  (click)="setTemplateImage(imageIndex, image.imageId)">
+                  <img class="pull-left img-responsive" src="data:image/PNG;base64,{{image.bytes}}" alt="">
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </ng-template>
+    </div>
+    <div class="" *ngSwitchDefault>
+      <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._image.length==0">
+        <div class="" *ngSwitchCase="true">
+          <div class="card-sub-content">
+            <img class="img-responsive" [src]="'assets/images/'+sharedDataService.publicationList[sharedDataService.activePublicationIndex]._defaultBuilderImageName"
+              alt="">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12" *ngSwitchDefault>
+            <div class="card-sub-content" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedRow">
+              <img class="img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._image}}"
+                alt="">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-card-content>
+
+<mat-card-content style="padding:10px 20px;word-break: break-all;" id="preview_properties_page" *ngIf="(!sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus && !sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewBuilderStatus) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'page'">
+  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage]">
+    <label class="small-text" *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].pageDetails">{{
+      sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].id
+      }}
+    </label>
+    <label class="small-text" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].pageDetails">{{
+      sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].pageDetails.pageId
+      }} </label>
+  </div>
+  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage]">
+    <div class="mPageContainer" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._mainPubIndex != -1"
+      style="display: inline-block;">
+      <div *ngFor="let pArea of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._mainPubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._mainPubIndex].pagePlanItemAreaDetailsList; let i= index">
+        <div *ngIf="pArea._temp" style="overflow:hidden;" class="areas" [ngStyle]="{'margin-left': pArea._temp._x +'px', 'margin-top': pArea._temp._y +'px', 'width': pArea._temp._width +'px', 'height': pArea._temp._height +'px', 'background-color': pArea._temp.color }">
+          <svg style="position: absolute;z-index: 2;left: 0;height:inherit;" *ngIf="pArea._temp._width > 74">
+            <line [attr.x1]="70-pArea._temp._x" y1="0" [attr.x2]="70-pArea._temp._x" [attr.y2]="pArea._temp._height" stroke-dasharray="5,5"
+              d="M5 20 l215 0" stroke="blue" style="stroke-width:2" />
+          </svg>
+        </div>
+      </div>
+    </div>
+    <div style="display: inline-block; width: calc(100% - 90px); vertical-align: top;" *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].pageDetails">
+      No Data to List
+    </div>
+    <div style="display: inline-block; width: calc(100% - 90px); vertical-align: top;" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedPubPage].pageDetails">
+      <div style="margin-left:25px" *ngFor="let pVar of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pageVariables; let pIn=index">
+        <div *ngIf="pVar.required">
+          <app-variable-template [variableData]="pVar" variableType="Page"></app-variable-template>
+        </div>
+      </div>
+      <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pageVariables.length>0">
+        <mat-icon style="margin-left: 20px" *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables"
+          (click)="switchVariables()">fast_forward</mat-icon>
+        <mat-icon style="margin-left: 20px" *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables"
+          (click)="switchVariables()">fast_rewind</mat-icon>
+      </div>
+      <ng-template [ngIf]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables">
+        <div style="margin-left:25px" *ngFor="let pVar of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pageVariables; let pIn=index">
+          <div *ngIf="!pVar.required">
+            <app-variable-template [variableData]="pVar" variableType="Page"></app-variable-template>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</mat-card-content>
+
+<mat-card-content id="preview_properties_element" *ngIf="(!sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus && !sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewBuilderStatus) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'element'">
+  <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._pubItems[sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.pIndex]">
+    <div *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex].multipleFlag;else otherContent">
+      <div class="row">
+        <div class="card-sub-content1 pull-left">
+          <div [ngSwitch]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length ==0">
+            <img *ngSwitchCase="true" class="img-responsive" style="margin: 0 auto" [src]="'assets/images/'+sharedDataService.publicationList[sharedDataService.activePublicationIndex]._defaultBuilderImageName"
+              alt="">
+            <div *ngSwitchDefault>
+              <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage ==''">
+                <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length>1" class="imageCount">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length}}</div>
+                <span [ngClass]="{'cursor': sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length > 1}">
+                  <img (click)="showMultipleImages()" class="img-responsive" src="data:image/PNG;base64,{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray[0].bytes}}"
+                    alt="">
+                </span>
+              </div>
+              <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage !=''">
+                <div *ngFor="let image of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray;let imageIndex=index">
+                  <div *ngIf="image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length>1"
+                    class="imageCount">{{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length}}</div>
+                  <span [ngClass]="{'cursor': sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray.length > 1}">
+                    <img *ngIf="image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage" (click)="showMultipleImages()"
+                      class="img-responsive" src="data:image/PNG;base64,{{image.bytes}}" alt="">
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-sub-content2 ib-ver-padd-sm">
+          <div *ngIf="!toggleBetwn">
+            <div>
+              <strong>{{elemProperties.displayValue}}</strong>
+            </div>
+            <div *ngIf="elemProperties.filters">
+              <div *ngFor="let colValues of elemProperties.filters | displaydata">
+                <p>{{colValues}}:
+                  <label style="float: center">{{ elemProperties.filters[colValues].values[0] }}</label>
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="toggleBetwn">
+            <div *ngFor="let eVar of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.result? sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.result : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables; let ev =index">
+              <div *ngIf="eVar.required">
+                <app-variable-template [variableData]="eVar" variableType="Element"></app-variable-template>
+              </div>
+            </div>
+            <div *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.result.length>0">
+              <mat-icon *ngIf="!sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables" (click)="switchVariables()">fast_forward</mat-icon>
+              <mat-icon *ngIf="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables" (click)="switchVariables()">fast_rewind</mat-icon>
+            </div>
+            <ng-template [ngIf]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showRequiredVariables">
+              <div *ngFor="let eVar of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.result? sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables.result : sharedDataService.publicationList[sharedDataService.activePublicationIndex]._elemVariables; let ev =index">
+                <div *ngIf="!eVar.required">
+                  <app-variable-template [variableData]="eVar" variableType="Element"></app-variable-template>
+                </div>
+              </div>
+            </ng-template>
+          </div>
+
+          <div class="productState" *ngIf="utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedElement) &&  utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedElement.productStateDisplayValue) && utilsService.isPresent(sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedElement.productStateColorCode)">
+            <mat-icon style="vertical-align: -7px; height: 52px; float: left; margin-right: 5px;" [style.color]="sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedElement.productStateColorCode">fiber_manual_record</mat-icon>
+            <label style="float: center">{{ sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedElement.productStateDisplayValue
+              }}
+            </label>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <ng-template #otherContent>
+      <div class="multipleImages">
+        <table>
+          <tr>
+            <td *ngFor="let image of sharedDataService.publicationList[sharedDataService.activePublicationIndex]._displayImageArray;let imageIndex=index">
+              <div class="SingleImage" [ngClass]="{'activeImage': image.imageId == sharedDataService.publicationList[sharedDataService.activePublicationIndex].selectedImage}"
+                (click)="setTemplateImage(imageIndex, image.imageId)">
+                <img class="img-responsive" src="data:image/PNG;base64,{{image.bytes}}" alt="">
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </ng-template>
+  </div>
+</mat-card-content>
+
+<mat-card-content id="preview_properties_area" *ngIf="(!sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewStatus && !sharedDataService.publicationList[sharedDataService.activePublicationIndex].previewBuilderStatus) && sharedDataService.publicationList[sharedDataService.activePublicationIndex]._showProperties == 'area'">
+  <div class="col-sm-12">
+    <div class="row pw-ver-padd-sm">
+      <div class="col-sm-5">
+        <strong>{{'AREA'|translate}}</strong>
+      </div>
+      <div class="col-sm-7">
+        {{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedArea.areaName}} {{sharedDataService.publicationList[sharedDataService.activePublicationIndex]._selectedArea.areaId}}
+      </div>
+    </div>
+    <div class="row pw-ver-padd-sm" *ngIf="data.templateList && data.templateList.length !=0">
+      <div class="col-sm-5">
+        <strong>{{'ALTERNATE_TEMPLATE'|translate}}</strong>
+      </div>
+      <div class="col-sm-7">
+        <mat-form-field>
+          <mat-select placeholder="{{ 'ALTERNATE_TEMPLATE' | translate }}" [(ngModel)]="alternateTemplate" (ngModelChange)="setAlternateTemplate($event)">
+            <mat-option *ngFor="let template of data.templateList" value="{{ template.trim() == ''? null :template }}" [style.color]="sharedDataService._Customization.dropDownSelection.color"
+              [style.background-color]="sharedDataService._Customization.dropDownSelection.bgColor" [style.font-family]="sharedDataService._Customization.font.style">
+              <span *ngIf="template.trim() == ''">
+                < Rules>
+              </span>
+              <span *ngIf="template.trim() != ''">{{ template }}</span>
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</mat-card-content>

@@ -1,0 +1,55 @@
+{
+	"font":{
+	  "style": "'Roboto', sans-serif"
+	},
+    "headerLogo": {
+	  "visible":"true"
+	},
+    "customerLogo": {
+      "text": "",
+      "path": ""
+    },
+	"topPagePanel": {
+	  "color":"hsla(0,0%,100%,.87)",
+	  "bgColor":"#555"
+	},
+    "headerPanel": {
+      "color": "hsla(0,0%,100%,.87)",
+      "bgColor": "#777"
+    },
+    "tabPanel": {
+      "color": "#fff",
+      "bgColor": "#d31246"
+    },
+    "dropDownSelection": {
+      "color": "#000000",
+	  "bgColor": "#fff"
+    },
+	"tableHeader": {
+	  "color":"#fff",
+	  "bgColor":"#67a2c0"
+	},
+    "tableSelection": {
+      "bgColor": "#e91e63",
+      "color": "#fff"
+    },
+	"componentColor":{
+	  "bgColor":"#D31246",
+	  "color":"#fff"
+	},
+	 "sidebarTools": {
+      "color": "#000000"
+    },
+	"icon": {
+      "selectionColor": "#67A2C0"
+    },
+	"selectedPages": {
+	  "visible":"true"
+	},
+	"generalSettings": {
+	  "visible":"true"
+	},
+	"editDataSource": {
+	  "visible":"true"
+	}
+  }

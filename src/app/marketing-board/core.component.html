@@ -1,0 +1,7 @@
+<app-header currentApp="MarketingBoard" [isLogin]='utilsService.isLogged()'></app-header>
+
+<app-side-bar currentApp="MarketingBoard" [sideBarData]="navigationMB"></app-side-bar>
+
+<div class="side-bar-margin">
+  <router-outlet></router-outlet>
+</div>
